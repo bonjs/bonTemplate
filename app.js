@@ -3,10 +3,10 @@ var Mock 	= require('mockjs');
 var app 	= express();
 
 
-app.use(express.static('./publish'));
+app.use(express.static('./'));
 
 app.get('/test', function (req, res) {
-	res.sendfile('./t3.html');
+	res.sendfile('./t4.html');
 });
 
 var server = app.listen(3000, function (a, b) {
