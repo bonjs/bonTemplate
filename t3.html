@@ -28,14 +28,14 @@
 			
 			var html = [
 				'<div>',
-					'<each list="u1">',
+					'<each list="u11">',
 						'<div>{一级１}</div>',
 						'<each u1.list=u2>',
 							'<div>{二级１}</div>',
 							'<each a=a>fdaf</each>',
 						'</each>',
 					'</each>',
-					'<each list="u1">',
+					'<each list="u12">',
 						'<div>{一级２}</div>',
 					'</each>',
 				'</div>'
@@ -63,19 +63,21 @@
 					stack.push(eb);
 					
 					if(stack.length == 1) {
-						console.log('一级', eb.getOriginalHtml());
+						//console.log('一级', eb.getOriginalHtml());
+						a.push(eb);
 					}
 				} else {
 					var eb = stack.pop();
 					eb.end = r.index;					// 结束位置
-					//delete eb.start;
+					//delete eb.begin;
 					//delete eb.end;
-					a.push(eb);
+					//a.push(eb);
 				}
 			};
 			
 			a.forEach(function(it, i) {
-				//console.log('-', it.getOriginalHtml());
+				console.log('-', it.getOriginalHtml());
+				//console.log(it);
 			});
 		};
 		
