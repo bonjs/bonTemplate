@@ -1,10 +1,9 @@
 defineClass('js.User', {
 	template: [
 		<div>
-
-
-			<li>[dfsa]{name}<button>删除</button></li>
-			<li>[dfsa]{name}<button>删除</button></li>
+			<each list=it>
+				<li>{it.name:formate}</li>
+			</each>
 		</div>
 	],
 	constructor: function() {
