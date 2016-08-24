@@ -32,7 +32,6 @@
 						'<div>{一级１}</div>',
 						'<each u1.list=u2>',
 							'<div>{二级１}</div>',
-							'<each a=a>fdaf</each>',
 						'</each>',
 					'</each>',
 				'</div>',
@@ -50,9 +49,8 @@
 			Block.prototype.html = html;
 			//console.log(html);
 			var a = t(html);
-			//console.log(a);
 			a.forEach(function(it, i) {
-				console.log('-', it.getBlock());
+				console.log('-', it.getBlocks());
 			});
 			
 		};
