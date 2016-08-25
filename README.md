@@ -1,6 +1,7 @@
 ## mytest
 
 #转换前
+```javascript
 defineClass('js.User', {
 	template: (
 		<div>
@@ -13,9 +14,10 @@ defineClass('js.User', {
 		});
 	}
 });
-
+```
 
 #转换后
+```javascript
 defineClass('js.User', {
 	template: [
 		'<div>',
@@ -28,3 +30,4 @@ defineClass('js.User', {
 		});
 	}
 });
+```
