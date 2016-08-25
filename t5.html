@@ -3,45 +3,57 @@
 <head>
   <meta charset="utf-8">
   <title>Hexo</title>
+  <style>
+  	* {
+  		border-bottom: 1px red solid
+  	}
+  </style>
 </head>
 <body>
+	<div id=a style="height: 100px"></div>
 	<script>
 		window.onload = function() {
 			
-			var data = {
+			window. data = {
+				title: '哈哈',
 				list: [
 					{
-						name: '标题1',
-					}, {
-						name: '标题2',
-					}
-				],
-				list2: [
-					{
-						name: '数组21'
-					}, {
-						name: '数组22'
+						name: '数组1', sex: '男',
+						list: [
+							{name: 'a'},
+							{name: 'b'},
+							{name: 'c'},
+						]
+					},	{
+						name: '数组1', sex: '男',
+						list: [
+							{name: 'a'},
+							{name: 'b'},
+							{name: 'c'},
+						]
 					}
 				]
 			};
 			
 			var html = [
 				'<div name="one">',
-					'<each list="u1">',
-						'<title>{u1.name}</title>',
+					'<each list="u">',
+						'<ul style="border: 1px blue solid;">{u.name}-{u.sex}</ul>',
+						'<each u.list="c">',
+							'<ul>{title}</ul>',
+						'</each>',
 					'</each>',
 				'</div>',
-				'<each list2="u">',
-					'<div>{u.name}</div>',
-				'</each>',
 			].join('');
 			
 			window.w = new Block({
 				template: html,
 				data: data
 			});
-			
-			console.log(w.getHtml());
+			var h = w.getHtml();
+
+			console.log(h);
+			document.getElementById('a').innerHTML = h;			
 		};
 		
 		
@@ -53,12 +65,13 @@
 			
 			this.placeholderTemplate = this.getPlaceholderTemplate();	// 替换占位符后的template
 			//this.html = this.getHtml();
-			
-			console.log(this.data);
-			console.log(this.template);
 		}
 		
 		Block.prototype = {
+			
+			isRoot: function() {
+				return this.begin === undefined;
+			},
 			
 			getHtml: function() {
 				/**
@@ -66,11 +79,7 @@
 				 */
 				var me = this;
 				if(this.children.length == 0) {	// 如果没有子block, 只替换大括号占位符
-					return this.placeholderTemplate.replace(/{([^}]+)}/g, function(x, a) {
-						//console.log(me);
-						//console.log('嘎', a);
-						return '哈哈';
-					})
+					
 				}
 				
 				return this.placeholderTemplate.replace(/\[(\w+)\]/g, function(x, a) {
@@ -79,14 +88,21 @@
 					var html = [];
 					
 					//block.data = this.data[block.arrVar];
-					block.data.forEach(function(it, i) {
-						html.push(block.getHtml());
+					block.data.forEach(function(d, i) {
+						var h = block.getHtml();
+						
+						var regStr = "{" + block.itemVar + "\\.(\\w+)}";
+						var reg = new RegExp(regStr, "g");
+						h = h.replace(reg, function(x, a) {
+							return d[a];
+						}).replace(/{([^}]+)}/, function(x, a) {
+							return data[a]
+						});
+						
+						html.push(h);
 					});
 					return html.join('');
 				}.bind(this));
-				
-				
-				
 			},
 			
 			getBlockById: function(id) {
@@ -137,8 +153,10 @@
 					return [];
 				}
 				
-				var a = arr.reduce(function(arr, it) {
-					it.data = me.data[it.arrVar];
+				var a = arr.reduce(function(arr, it, i) {
+					
+					var arrVar = /(?:\w+\.)*(\w+)/.exec(it.arrVar)[1];
+					it.data = me.isRoot() ? me.data[it.arrVar] : me.data[i][arrVar];
 					arr.push(new Block(it));
 					return arr;
 				}, []);
