@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hexo</title>
+</head>
+<body>
+	<script>
+		window.onload = function() {
+			
+			var data = {
+				list: [
+					{
+						name: '标题1',
+					}, {
+						name: '标题2',
+					}
+				],
+				list2: [
+					{
+						name: '数组21'
+					}, {
+						name: '数组22'
+					}
+				]
+			};
+			
+			var html = [
+				'<div name="one">',
+					'<each list="u1">',
+						'<title>{u1.name}</title>',
+					'</each>',
+				'</div>',
+				'<each list2="u">',
+					'<div>{u.name}</div>',
+				'</each>',
+			].join('');
+			
+			window.w = new Block({
+				template: html,
+				data: data
+			});
+			
+			console.log(w.getHtml());
+		};
+		
+		
+		function Block(opts) {
+			for(var k in opts) {
+				this[k] = opts[k];
+			}
+			this.children = this.getChildBlock();
+			
+			this.placeholderTemplate = this.getPlaceholderTemplate();	// 替换占位符后的template
+			//this.html = this.getHtml();
+			
+			console.log(this.data);
+			console.log(this.template);
+		}
+		
+		Block.prototype = {
+			
+			getHtml: function() {
+				/**
+				 *	填充数据 
+				 */
+				var me = this;
+				if(this.children.length == 0) {	// 如果没有子block, 只替换大括号占位符
+					return this.placeholderTemplate.replace(/{([^}]+)}/g, function(x, a) {
+						//console.log(me);
+						//console.log('嘎', a);
+						return '哈哈';
+					})
+				}
+				
+				return this.placeholderTemplate.replace(/\[(\w+)\]/g, function(x, a) {
+					var block = this.getBlockById(a);
+					
+					var html = [];
+					
+					//block.data = this.data[block.arrVar];
+					block.data.forEach(function(it, i) {
+						html.push(block.getHtml());
+					});
+					return html.join('');
+				}.bind(this));
+				
+				
+				
+			},
+			
+			getBlockById: function(id) {
+				return this.children.filter(function(it, i) {
+					return it.blockId == id;
+				})[0];
+			},
+			
+			getChildBlock: function() {	// 获取一级子block(不包含孙block)
+				var me = this;
+				var tpl = this.template;
+				var reg = /<\/?each[^>]*>/g;
+				var r, stack = [], arr = [];
+				while(r = reg.exec(tpl)) {
+					
+					var result = /<each\s+([\w.]+)=["']?(\w+)["']?>/.exec(r[0]);
+					
+					if(result) {
+						var arrVar 	= result[1];
+						var itemVar = result[2];
+						
+						var ebOption = {
+							begin: r.index + r[0].length,	// 开始位置(从block内容开始)
+							beginOuter: r.index,			// 开始位置(从block开始)
+							arrVar: arrVar,
+							itemVar: itemVar
+						};
+						stack.push(ebOption);
+						
+						// 顺序要反序，因为替换成占位符时要用到开始和结束位置，如果先替换前面的，后面的位置就不准确了
+						stack.length == 1 && arr.unshift(ebOption);
+								
+					} else {
+						var ebOption = stack.pop();
+						ebOption.end = r.index;						// 结束位置
+						ebOption.endOuter = r.index + r[0].length;	// 结束位置
+
+						ebOption.template = function() {
+							return tpl.substring(this.begin, this.end);
+						}.call(ebOption);
+						//delete eb.begin;
+						//delete eb.end;
+						//a.push(eb);
+					}
+				};
+				
+				if(arr.length == 0) {
+					return [];
+				}
+				
+				var a = arr.reduce(function(arr, it) {
+					it.data = me.data[it.arrVar];
+					arr.push(new Block(it));
+					return arr;
+				}, []);
+			
+				return a;
+			},
+			
+			getPlaceholderTemplate: function(html, begin, end) {
+				
+				var children = this.children;
+				var tpl = this.template;
+				children.forEach(function(block, i) {
+					var beforeHTML = tpl.substring(0, block.beginOuter);
+					var afterHTML = tpl.substring(block.endOuter, tpl.length);
+					var id = getId();
+					
+					block.blockId = id;
+					tpl = [
+						beforeHTML,
+						'[',
+							id,
+						']',
+						afterHTML
+					].join('');
+				});
+				
+				return tpl;
+			}
+		};
+		
+		function getId() {	// 获取一个唯一标识  形如 js.module.UserListWay-kipt646o
+			return [
+				Math.random().toString(36).slice(2, 10)
+			].join('');
+		}
+		
+		
+	</script>
+</body>
+</html>
