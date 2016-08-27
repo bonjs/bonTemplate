@@ -22,7 +22,7 @@
   		list-style: none;
   		padding-left: 60px
   	}
-  	li, div{
+  	li{
   		padding: 3px 0 3px 110px;
   	}
   </style>
@@ -33,6 +33,7 @@
 	<script>
 			
 		$.get('getData', function(data) {
+			console.log('begin');
 			var html = [
 				'<div>{title}</div>',
 				'<div>',
@@ -55,15 +56,19 @@
 		
 		});
 		
+		
+		
 		function bonTemplate(html, data) {
-
-			return new Node({
+			var n = new Node({
 				template: html,
 				scopeChain: [{
 					scope: null,
 					data: data
 				}]
-			}).getHtml();
+			});
+			var html = n.getHtml();
+			n = null;
+			return html;
 		}
 		
 		
