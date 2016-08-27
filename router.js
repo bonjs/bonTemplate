@@ -17,14 +17,14 @@ var router = {
 	},
 	'/getData': {
 		title : 'ckk',
-		'departList|5' : [{
-				departName : /\w{5}\d{1,2}/,
-				leaderName: /\w{5}/,
-				'group|2': [
+		'departList|2' : [{
+				departName : /[A-Z][a-z]{1,6}/,
+				leaderName: /([A-Z][a-z]{1,6} ){2}/,
+				'group|5': [
 					{
-						groupName: /\w{5}/,
-						'userList|3': [
-							{name: /\w{5,7}/, sex:/[mf]/}
+						groupName: /[A-Z][a-z]{1,6}/,
+						'userList|20': [
+							{name: /([A-Z][a-z]{1,6} ){2}/, sex:/[mf]/}
 						]
 					}
 				]
