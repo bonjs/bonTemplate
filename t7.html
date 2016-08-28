@@ -29,7 +29,6 @@
   <script src="//cdn.bootcss.com/jquery/1.12.1/jquery.js"></script>
 </head>
 <body>
-	<div id=a style="height: 100px"></div>
 	<script>
 			
 		$.get('getData', function(data) {
@@ -38,24 +37,46 @@
 				'<div>{title}</div>',
 				'<div>',
 					'<each departList="d">',
-						'<div class="title">{d.departName}-{d.leaderName}</div>',
+						'<div class="title">{d.departName}-{d.leaderName} 一级</div>',
 						'<each d.group=g>',
-							'<li class="title2">{g.groupName}组</li>',
+							'<li class="title2">{g.groupName}组　二级</li>',
 							'<each g.userList=u>',
-								'<li>{u.name}({u.sex == "m" ?　"男" : "女"}) ({d.departName})</li>',
+								'<li>{u.name}({u.sex == "m" ?　"男" : "女"}) ({d.departName})　三级</li>',
+								'<each u.list=c>',
+									'<div style="padding-left: 160px"> --{c.name}　四级</div>',
+									'<each c.list=cc>',
+										'<div style="padding-left: 200px">{cc.name}　五级</div>',
+										'<each cc.list=ccc>',
+											'<div style="padding-left: 260px">{ccc.name}　六级</div>',
+											'<each ccc.list=cccc>',
+												'<div style="padding-left: 300px">{cccc.name}　七级</div>',
+													'<each cccc.list=ccccc>',
+														'<div style="padding-left: 300px">{ccccc.name}　八级</div>',
+													'</each>',
+											'</each>',
+										'</each>',
+									'</each>',
+								'</each>',
 							'</each>',
 						'</each>',
 					'</each>',
 				'</div>',
 			].join('');
 			
-			var d = new Date().getTime();
+			var html2 = [
+					'<each departList="d">',
+						'{d.departName}',
+					'</each>',
+			].join('');
+			
+			var start = new Date().getTime();
 			var html = bonTemplate(html, data);
+			var time = new Date().getTime() - start;
+			alert(time);
+			console.log('time:', time);
 			document.body.innerHTML = html;
-			console.log('time:', new Date().getTime() - d);
 		
 		});
-		
 		
 		
 		function bonTemplate(html, data) {
@@ -86,7 +107,10 @@
 				this.childNodes.forEach(function(c, i) {
 					html.push(c.getHtml());
 				});
-				return html.join('');
+				this.childNodes = null;
+				var h = html.join('');
+				html = null;
+				return h;
 			},
 			getNodes: function() {
 				var me = this;
@@ -109,22 +133,23 @@
 						template	: me.template,
 						scopeChain	: scopeChain,
 					});
-					
+					scopeChain = null;
 					nodes.push(node);
 				});
+				matchs = prefix = suffix = data = null;
 				return nodes;
 			},
 			getChainMappingValue: function(prefix, suffix) {
 				var arr = this.scopeChain.filter(function(s, i) {
 					return s.scope == prefix;
 				});
-				if(arr.length) {
-					return arr[0].data[suffix];
-				}
+				var v = arr.length ? arr[0].data[suffix] : null;
+				arr = null;
+				return v;
 			},
 			
 			getId: function() {
-				return this.blockId = this.blockId || Math.random().toString(36).slice(2, 10);
+				return this.id = this.id || Math.random().toString(36).slice(2, 10);
 			}
 		};
 		
@@ -143,11 +168,14 @@
 				var html = this.placeholderTemplate.replace(/{([^}]+)}/g, function(x, expression) {
 					return me.getExpressionValue(expression);
 				});
+				this.placeholderTemplate = null;
 				
 				if(this.children.length) {		// 如果有子block, 替换为子block.getHtml();
 					html = html.replace(/\[#(\w+)\]/g, function(x, a) {
 						var block = me.getBlockById(a);
-						return block.getHtml();
+						var h = block.getHtml();
+						block = null;
+						return h;
 					});
 				}
 				
@@ -158,7 +186,6 @@
 			getExpressionValue: function(expression) {
 			
 				var sc 			= this.scopeChain;
-				var data 		= sc[0];
 				var scopeObject = {};
 				sc.forEach(function(s) {
 					if(s.scope) {
@@ -171,9 +198,9 @@
 				for(var k in rootScopeData) {
 					scopeObject[k] = rootScopeData[k];
 				}
-				var currentScope = sc[0];
 				
 				eval('with(scopeObject){ var returnVar = (' + expression + ') }');
+				scopeObject = rootScopeData = sc = null;
 				return returnVar;
 			},
 			
@@ -194,17 +221,14 @@
 						var countVar	= result[3];
 						var indexVar 	= result[4];
 						
-						//console.log(countVar, indexVar);
-						
-						var ebOption = {
+						stack.push({
 							begin		: eMatch.index + eMatch[0].length,	// 开始位置(从block内容开始)
 							beginOuter	: eMatch.index,						// 开始位置(从block开始)
 							arrVar		: arrVar,
 							itemVar		: itemVar,
 							countVar	: countVar,
 							indexVar	: indexVar
-						};
-						stack.push(ebOption);
+						});
 					} else {
 						// </each>
 						var ebOption = stack.pop();
@@ -222,14 +246,17 @@
 							// 顺序要反序，因为替换成占位符时要用到开始和结束位置，如果先替换前面的，后面的位置发生变化就不准确了
 							arr.unshift(eachBlock);
 						}
+						ebOption = null;
 					}
+					result = null;
 				};
+				eachBeginReg = eachReg = eMatch = stack = null;
 				return arr;
 			},
 			
 			getBlockById: function(id) {
 				return this.children.filter(function(it) {
-					return it.blockId == id;
+					return it.id == id;
 				})[0];
 			},
 			
@@ -244,7 +271,7 @@
 						afterHTML
 					].join('');
 				});
-				
+				this.template = null;	
 				return tpl;
 			}
 		};
@@ -252,7 +279,7 @@
 		// 只clone非数组属性
 		function cloneScopeChain(data) {
 		
-			var arr = data.reduce(function(arr, it) {
+			var chain = data.reduce(function(arr, it) {
 				var o = {};
 				for(var k in it) {
 					if(it[k]) {
@@ -261,12 +288,10 @@
 						o[k] = it[k]
 					}
 				}
-				
 				arr.push(o);
 				return arr;
 			}, []);
-			
-			return arr;
+			return chain;
 		}
 		
 		
