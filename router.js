@@ -34,7 +34,11 @@ var router = {
 														'list|2': [
 															{name: /\w{5}/,
 																'list|2': [
-																	{name: /\w{5}/}
+																	{name: /\w{5}/,
+																		'list|2': [
+																			{name: /\w{5}/}
+																		]
+																	}
 																]
 															}
 														]
