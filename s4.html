@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hexo</title>
+  <style>
+  	body *{
+  		padding: 0px;
+  		margin: 0px;
+  		font-size: 14px;
+  	}
+  	body * {
+  		border-bottom: 1px red solid;
+  	}
+  	.title {
+  		font-weight: bold;
+  		background: #acc;
+  		padding-left: 10px
+  	}
+  	.title2 {
+  		background: #ddd;
+  		list-style: none;
+  		padding-left: 60px
+  	}
+  	li{
+  		padding: 3px 0 3px 110px;
+  	}
+	.hidden {
+		display:none;
+	}
+  </style>
+  <script src="//cdn.bootcss.com/jquery/1.12.1/jquery.js"></script>
+</head>
+<body>
+	<div id=a></div>
+	<script>
+		
+		var html = [
+			'<div>',
+				'<div class=title>{name}</div>',
+				'<each departList=a>',
+					'<li class=title2>{a.departName}</li>',
+					'<each a.group=b>',
+						'<li>{b.groupName}</li>',
+						'<each b.userList=c>',
+							'<li style="padding-left: 160px">{c.name}</li>',
+							'<each c.list=d>',
+								'<li style="padding-left: 210px">{d.name}</li>',
+								'<each d.list=e>',
+									'<li style="padding-left: 260px">{e.name}</li>',
+								'</each>',
+							'</each>',
+						'</each>',
+					'</each>',
+				'</each>',
+			'</div>',
+		].join('');
+		
+		$.get('getData', function(data) {
+			var start = new Date().getTime();
+			bon.complier(html);
+			var h = bon.render(data);
+			
+			var time = new Date().getTime() - start;
+			a.innerHTML = h;
+			//alert(time);
+		});
+		
+		var bon = function() {
+		
+			var isES5 = !!Object.defineProperty;
+			return {
+				render: function(data, html) {
+					html && this.complier(html);
+				
+					var tpl = this.template;
+				
+					//eval('var compilerTpl = []; with(data) { ' + tpl + '}');
+					
+					var compilerTpl = isES5 ? '' : []; 
+					eval(tpl);
+					
+					var result = isES5 ? compilerTpl : compilerTpl.join('');
+					compilerTpl = null;
+					return result;
+				},
+				complier: function(html) {
+					var r = /<\/?each\s?[^>]*>|<\/?if\s?[^>]*>/g;
+					var htmlTags 	= html.split(r);	// html标签
+					var customTags 	= html.match(r);	// 自定义标签（<each><if>）
+					
+					var len = Math.max(htmlTags.length, customTags.length);
+				
+					var tpl = isES5 ? '' : [];
+					for(var i = 0; i < len; i ++) {
+						if(htmlTags[i]) {
+							var hTag = htmlTags[i];
+							var hTag = hTag.replace(/{([^}]+)}/g, function(x, k) {
+								if(/\./.test(k)) {
+									return ["' + (" , k , ") + '"].join('');
+								}
+								return ["' + (typeof " , k , " == \"undefined\" ? data." , k , " : " , k , ") + '"].join('');
+							});
+							isES5 ? tpl += "compilerTpl += ('" + hTag + "'); \n" : tpl.push("compilerTpl.push('" + hTag + "'); \n");
+						}
+						if(customTags[i]) {
+							var cTag = customTags[i];
+							var reg = /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
+							cTag = cTag.replace(reg, function(x, arrVar, itemVar, countVar, indexVar) {
+								return 'var d = typeof ' + arrVar + ' == "undefined" ? data.' + arrVar + ' : ' + arrVar + '; d.forEach(function(' + itemVar + ', ' + indexVar + ') { \n';
+							}).replace(/<if\s+([\w.]+)={1,2}['"]?(\w+)['"]?\s*>/g, function(x, v1, v2) {
+								return 'if(' + v1 + ' == "' + v2 + '") { \n';
+							}).replace(/<\/if>/g, ' } \n ').replace(/<\/each>/g, ' }); \n');
+							
+							isES5 ? tpl += cTag : tpl.push(cTag);
+						}
+					}
+					this.template = isES5 ? tpl : tpl.join('');
+					
+					tpl = customTags = htmlTags = null;
+				}
+			}
+		}();
+		
+		
+	</script>
+</body>
+</html>
