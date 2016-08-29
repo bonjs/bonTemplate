@@ -38,7 +38,7 @@
 		var html = [
 			'<ul>',
 				'<each list=u>',
-					'<li>{name} 用户: {u.user} / 网站：{u.site}</li>',
+					'<li>用户: {u.user} / 网站：{u.site}</li>',
 				'</each>',
 			'</ul>',
 		].join('');
@@ -49,13 +49,13 @@
 			for(var i = 0; i < 10000; i ++) {
 				bon.render(data);
 			}
-			//a.innerHTML = h;
 			var time = new Date().getTime() - start;
 			alert(time);
 		});
 		
 		var bon = function() {
 		
+			var isES5 = !!Object.defineProperty;
 			return {
 				render: function(data, html) {
 					html && this.complier(html);
@@ -64,10 +64,10 @@
 				
 					//eval('var compilerTpl = []; with(data) { ' + tpl + '}');
 					
-					var compilerTpl = []; 
+					var compilerTpl = isES5 ? '' : []; 
 					eval(tpl);
 					
-					var result = compilerTpl.join('');
+					var result = isES5 ? compilerTpl : compilerTpl.join('');
 					compilerTpl = null;
 					return result;
 				},
@@ -78,7 +78,7 @@
 					
 					var len = Math.max(htmlTags.length, customTags.length);
 				
-					var compilerTpl = [], tpl = [];
+					var tpl = isES5 ? '' : [];
 					for(var i = 0; i < len; i ++) {
 						if(htmlTags[i]) {
 							var hTag = htmlTags[i];
@@ -88,23 +88,23 @@
 								}
 								return ["' + (typeof " , k , " == \"undefined\" ? data." , k , " : " , k , ") + '"].join('');
 							});
-							tpl.push("compilerTpl.push('" + hTag + "'); \n");
+							isES5 ? tpl += "compilerTpl += ('" + hTag + "'); \n" : tpl.push("compilerTpl.push('" + hTag + "'); \n");
 						}
 						if(customTags[i]) {
 							var cTag = customTags[i];
 							var reg = /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
 							cTag = cTag.replace(reg, function(x, arrVar, itemVar, countVar, indexVar) {
-								return 'data.' + arrVar + '.forEach(function(' + itemVar + ', ' + indexVar + ') { \n';
+								return 'var d = typeof ' + arrVar + ' == "undefined" ? data.' + arrVar + ' : ' + arrVar + '; d.forEach(function(' + itemVar + ', ' + indexVar + ') { \n';
 							}).replace(/<if\s+([\w.]+)={1,2}['"]?(\w+)['"]?\s*>/g, function(x, v1, v2) {
 								return 'if(' + v1 + ' == "' + v2 + '") { \n';
 							}).replace(/<\/if>/g, ' } \n ').replace(/<\/each>/g, ' }); \n');
 							
-							tpl.push(cTag);
+							isES5 ? tpl += cTag : tpl.push(cTag);
 						}
 					}
-					this.template = tpl.join('');
-					console.log(this.template);
-					compilerTpl = tpl = customTags = htmlTags = null;
+					this.template = isES5 ? tpl : tpl.join('');
+					
+					tpl = customTags = htmlTags = null;
 				}
 			}
 		}();
