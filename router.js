@@ -27,6 +27,7 @@ var router = {
 		]
 	},
 	'/data2': {
+		name:'¹ş¹ş',
 		'list|100': [
 			{
 				'index|+1': 1,
