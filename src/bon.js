@@ -15,8 +15,8 @@ var bon = function() {
 		
 			var tpl = this.template;
 		
+			// 弃用效率低的with
 			//eval('var compilerTpl = []; with(data) { ' + tpl + '}');
-			
 			var compilerTpl = isES5 ? '' : []; 
 			eval(tpl);
 			
@@ -42,16 +42,14 @@ var bon = function() {
 						}
 						
 						// 如果没有.符号，判断key前缀（如果有）或key在当前环境是否存在，如不存在，取根级的，加前缀data
-						var str = ["' + ", (fn || ""), "(typeof " , k, " == \"undefined\" || " , k, " == \"\" ? rootData." , k, " : " , k, ") + '"].join('');
-					
-						return str;
+						return ["' + ", (fn || ""), "(typeof ", k, " == \"undefined\" || ", k, " == \"\" ? rootData.", k, " : ", k, ") + '"].join('');
 					});
 					isES5 ? statement += "compilerTpl += ('" + hTag + "'); \n" : statement.push("compilerTpl.push('" + hTag + "'); \n");
 				}
 				if(customTags && customTags[i]) {
 					var cTag = customTags[i];
 					cTag = cTag.replace(eachAttributeReg, function(x, arrVar, itemVar, countVar, indexVar) {
-						return 'var arr = typeof ' + arrVar + ' == "undefined" ? rootData.' + arrVar + ' : ' + arrVar + '; arr.forEach(function(' + itemVar + ', ' + indexVar + ') { \n';
+						return 'var arr = typeof ' + arrVar + ' == "undefined" ? rootData.' + arrVar + ' : ' + arrVar + '; \narr.forEach(function(' + itemVar + ', ' + indexVar + ') { \n';
 					});
 					
 					cTag = cTag.replace(ifAttributeReg, function(x, ifExpression) {
@@ -61,9 +59,9 @@ var bon = function() {
 							return '(typeof ' + a + ' == "undefined" || ' + a + ' == "" ? rootData.' + x + ' : ' + x + ')';
 						});
 						
-						return 'if(' + ifExpression + ') { \n';
+						return 'if(' + ifExpression + ') {\n';
 						//return 'if(' + v1 + ' == "' + v2 + '") { \n';
-					}).replace(/<\/if>/g, ' } \n ').replace(/<\/each>/g, ' }); \n');
+					}).replace(/<\/if>/g, '}\n').replace(/<\/each>/g, '});\n');
 					
 					isES5 ? statement += cTag : statement.push(cTag);
 				}
