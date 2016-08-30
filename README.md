@@ -88,7 +88,7 @@ a.innerHTML = html;
 }
 ```
 
-###条件表达式
+###表达式
 ```
 <div>
 	<div>{u.name}</div>
