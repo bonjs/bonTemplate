@@ -22,7 +22,6 @@ function doRouter(r) {
 }
 
 
-
 app.use(express.static('./'));
 
 app.get('/test', function (req, res) {
