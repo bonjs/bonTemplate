@@ -24,7 +24,7 @@ var data = {
 	email	: 'ske@163.com'
 }
 ```
-####javascript
+####调用方式
 ```javascript
 bon.complier(document.getElementById('tpl').innerHTML);
 var html = bon.render(data);
@@ -51,20 +51,14 @@ a.innerHTML = html;
 			sex	: 'm',
 			email	: 'ske@163.com',
 			hobbys: [
-				'吃',
-				'喝',
-				'玩',
-				'乐'
+				'吃',　'喝',　'玩',　'乐'
 			]
 		}, {
 			name	: 'bonTemplate',
 			sex	: 'm',
 			email	: 'ske@163.com'，
 			hobbys: [
-				'吃',
-				'喝',
-				'玩',
-				'乐'
+				'吃',　'喝',　'玩',　'乐'
 			]
 		}
 	]
