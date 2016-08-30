@@ -39,7 +39,7 @@
 		
 		var html = [
 			'<div>',
-				'<div>{name}</div>',
+				'<div>{title}</div>',
 				'<each departList=a>',
 					'<li class=title>{a.departName} 一级</li>',
 					'<each a.group=b>',
@@ -47,13 +47,19 @@
 						'<each b.userList=c>',
 							'<li style="padding-left: 100px">{c.name}　三级</li>',
 							'<each c.list=d>',
-								'<li style="padding-left: 160px">{d.name}　四级</li>',
+								'<li style="padding-left: 150px">{d.name}　四级</li>',
 								'<each d.list=e>',
 									'<li style="padding-left: 200px">{e.name}　五级</li>',
 									'<each e.list=f>',
-										'<li style="padding-left: 260px">{f.name}　六级</li>',
+										'<li style="padding-left: 250px">{f.name}　六级</li>',
 										'<each f.list=g>',
-											'<li style="padding-left: 300px">{g.name}　六级</li>',
+											'<li style="padding-left: 300px">{g.name}　七级</li>',
+											'<each g.list=h>',
+												'<li style="padding-left: 350px">{h.name}　八级</li>',
+												'<each h.list=i>',
+													'<li style="padding-left: 400px">{i.name}　九级</li>',
+												'</each>',
+											'</each>',
 										'</each>',
 									'</each>',
 								'</each>',
@@ -71,7 +77,6 @@
 			
 			var time = new Date().getTime() - start;
 			a.innerHTML = h;
-			alert(time);
 		});
 		
 		

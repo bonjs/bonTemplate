@@ -26,33 +26,38 @@ var bon = function() {
 		},
 		complier: function(html) {
 			html = html.replace(/\s*\n\s*/g, '');
-			var htmlTags 	= html.split(customTagsReg);	// html��ǩ
-			var customTags 	= html.match(customTagsReg);	// �Զ����ǩ��<each><if>��
+			var htmlTags 	= html.split(customTagsReg);	// html标签
+			var customTags 	= html.match(customTagsReg);	// 自定义标签（<each><if>）
 			
-			var len = Math.max(htmlTags.length, customTags.length);
+			var len = Math.max(htmlTags ? htmlTags.length : 0, customTags ? customTags.length : 0);
 		
 			var statement = isES5 ? '' : [];
 			for(var i = 0; i < len; i ++) {
-				if(htmlTags[i]) {
+				if(htmlTags && htmlTags[i]) {
 					var hTag = htmlTags[i];
-					hTag = hTag.replace(/{([^}]+)}/g, function(x, k) {
-						if(/\./.test(k)) {
-							return ["' + (" , k , ") + '"].join('');
+					
+					hTag = hTag.replace(/{(.*?)(?:\:(\w+))?}/g, function(x, k, fn) {
+						if(/\./.test(k)) {		// 如果有.标点，直接取值
+							return ["' + ", (fn || ""), "(" , k , ") + '"].join('');
 						}
-						return ["' + (typeof " , k , " == \"undefined\" ? rootData." , k , " : " , k , ") + '"].join('');
+						
+						// 如果没有.符号，判断key前缀（如果有）或key在当前环境是否存在，如不存在，取根级的，加前缀data
+						var str = ["' + ", (fn || ""), "(typeof " , k, " == \"undefined\" || " , k, " == \"\" ? rootData." , k, " : " , k, ") + '"].join('');
+					
+						return str;
 					});
 					isES5 ? statement += "compilerTpl += ('" + hTag + "'); \n" : statement.push("compilerTpl.push('" + hTag + "'); \n");
 				}
-				if(customTags[i]) {
+				if(customTags && customTags[i]) {
 					var cTag = customTags[i];
 					cTag = cTag.replace(eachAttributeReg, function(x, arrVar, itemVar, countVar, indexVar) {
-						return 'var d = typeof ' + arrVar + ' == "undefined" ? rootData.' + arrVar + ' : ' + arrVar + '; d.forEach(function(' + itemVar + ', ' + indexVar + ') { \n';
+						return 'var arr = typeof ' + arrVar + ' == "undefined" ? rootData.' + arrVar + ' : ' + arrVar + '; arr.forEach(function(' + itemVar + ', ' + indexVar + ') { \n';
 					});
 					
 					cTag = cTag.replace(ifAttributeReg, function(x, ifExpression) {
 					
-						// �ж�keyǰ׺������У���key�ڵ�ǰ�����Ƿ���ڣ��粻���ڣ�ȡ�����ģ���ǰ׺data
-						ifExpression = ifExpression.replace(/\b(?:([\w]+)[\w\[\]]*)(?:\.\w+)?\b(?!['".])/g, function(x, a, b) {
+						// 判断key前缀（如果有）或key在当前环境是否存在，如不存在，取根级的，加前缀data
+						ifExpression = ifExpression.replace(/\b(?:([\w]+)[\w\[\]]*)(?:\.\w+)?\b(?!['".])/g, function(x, a) {
 							return '(typeof ' + a + ' == "undefined" || ' + a + ' == "" ? rootData.' + x + ' : ' + x + ')';
 						});
 						
