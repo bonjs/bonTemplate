@@ -10,7 +10,10 @@
 ```Bash
 git clone https://github.com/bonjs/bonTemplate.git
 npm install
+node app
 ```
+
+访问http://127.0.0.1:3000
 
 ####模板
 ```
