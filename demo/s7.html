@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Template脸色</title>
+  <style>
+  	body *{
+  		padding: 0px;
+  		margin: 0px;
+  		font-size: 14px;
+  	}
+ 
+  	.title {
+  		font-weight: bold;
+  		background: #acc;
+  		padding-left: 10px
+  	}
+  	.title2 {
+  		background: #ddd;
+  		list-style: none;
+  		padding-left: 60px
+  	}
+  	li{
+  		padding: 3px 0 3px 110px;
+  	}
+	.hidden {
+		display:none;
+	}
+	.red {
+		color: red;
+	}
+	.green {
+		color: green;
+	}
+  </style>
+  <script src="/src/bon.js"></script>
+</head>
+<body>
+	<div id=a></div>
+	<script id=tpl type="html">
+		<div>{date:myTest}</div>
+	</script>
+	
+	<script>
+		function myTest(v) {
+			var m = /(\d{4})(\d{2})(\d{2})/.exec(v);
+			return m[1] + '年' + m[2] + '月' + m[3] + '日';
+		}
+		var data = {
+			date: '20160830'
+		}
+		
+		bon.complier(document.getElementById('tpl').innerHTML);
+		var h = bon.render(data);
+		a.innerHTML = h;
+		
+		
+	</script>
+</body>
+</html>
