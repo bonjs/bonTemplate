@@ -50,8 +50,8 @@
 			date: '20160830'
 		}
 		
-		bon.complier(document.getElementById('tpl').innerHTML);
-		var h = bon.render(data);
+		var html = document.getElementById('tpl').innerHTML;
+		var h = bon.render(data, html);
 		a.innerHTML = h;
 		
 		
