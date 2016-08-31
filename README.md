@@ -7,6 +7,7 @@
 * 支持表达式
 * 支持自定义格式化函数
 
+####安装和启动
 ```Bash
 git clone https://github.com/bonjs/bonTemplate.git
 npm install
