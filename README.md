@@ -128,3 +128,42 @@ function myFun(v) {
 	sex	: 'm',
 	email	: 'ske@163.com'
 }
+
+###全家桶
+```
+<each userList=u>
+	<div>{u.name}</div>
+	<div>{u.sex == 'm' ? '男' : '女'}</div>
+	<div>{u.email}</div>
+	<each u.hobbys=h>
+		<label>{h}</label>
+	</each>
+	<if u.sex == 'm'>
+		爱好数码
+	</if>
+	<if u.sex == 'f'>
+		爱好买衣服
+	</if>
+</each>
+```
+```javascript
+{
+	userList: [
+		{
+			name	: 'bonTemplate',
+			sex	: 'm',
+			email	: 'ske@163.com',
+			hobbys: [
+				'吃',　'喝',　'玩',　'乐'
+			]
+		}, {
+			name	: 'she',
+			sex	: 'f',
+			email	: 'fdsafs@163.com'，
+			hobbys: [
+				'吃',　'喝',　'玩',　'乐'
+			]
+		}
+	]
+}
+```
