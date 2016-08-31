@@ -11,9 +11,9 @@
 */
 var bon = function() {
 	
-	var customTagsReg		= /<\/?(?:each|if)\s?[^>]*>/g; // /<\/?each\s?[^>]*>|<\/?if\s?[^>]*>/g;
-	var eachAttributeReg 	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
-	var ifAttributeReg 		= /<if\s+([^>]+)\s*>/g;
+	var customTagsReg     	= /<\/?(?:each|if)\s?[^>]*>/g; // /<\/?each\s?[^>]*>|<\/?if\s?[^>]*>/g;
+	var eachAttributeReg   	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
+	var ifAttributeReg    	= /<if\s+([^>]+)\s*>/g;
 	
 	var isES5 = !!Object.defineProperty;
 	return {
