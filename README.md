@@ -32,7 +32,7 @@ var data = {
 	email	: 'ske@163.com'
 }
 ```
-##调用方式
+####调用方式
 ```javascript
 bon.complier(document.getElementById('tpl').innerHTML);
 var html = bon.render(data);
