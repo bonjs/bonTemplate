@@ -5,7 +5,6 @@ var Mock 	= require('mockjs');
 var app 	= express();
 
 
-
 var router 	= require('./router');
 
 doRouter(router.router);
