@@ -9,9 +9,10 @@
 	支持自定义格式化函数
 */
 var bon = function() {
-	var customTagsReg		= /<\/?(?:each|if)\s?[^>]*>/g;
-	var eachAttributeReg 	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
-	var ifAttributeReg 		= /<if\s+([^>]+)\s*>/g;
+	
+	var customTagsReg     	= /<\/?(?:each|if)\s?[^>]*>/g;
+	var eachAttributeReg   	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
+	var ifAttributeReg    	= /<if\s+([^>]+)\s*>/g;
 	
 	var isES5 = !!Object.defineProperty;
 	var cache = {};

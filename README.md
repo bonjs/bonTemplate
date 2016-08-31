@@ -1,11 +1,12 @@
 # bonTemplate
-* 高效率(100条数据执行10000次70多ms，我本机上的测试结果，视电脑配置)
+* 高效(100条数据执行10000次70多ms，我本机上的测试结果，视电脑配置)
 * 轻量(压缩前也才3k)
 * 支持循环```<each>```
 * 支持条件判断```<if>```
 * 支持嵌套
 * 支持表达式
 * 支持自定义格式化函数
+* 使用简单，易懂
 
 ####安装和启动
 ```Bash
@@ -40,7 +41,7 @@ a.innerHTML = html;
 ```
 
 
-###可嵌套的循环标签
+##可嵌套的循环标签
 ```
 <each userList=u>
 	<div>{u.name}</div>
@@ -73,7 +74,7 @@ a.innerHTML = html;
 }
 ```
 
-###条件标签
+##条件标签
 ```
 <div>
 	<div>{u.name}</div>
@@ -92,7 +93,7 @@ a.innerHTML = html;
 }
 ```
 
-###表达式
+##表达式
 ```
 <div>
 	<div>{u.name}</div>
@@ -108,7 +109,7 @@ a.innerHTML = html;
 }
 ```
 
-###自定义格式化函数
+##自定义格式化函数
 ```javascript
 function myFun(v) {
 	return v == 'm' ? '男' : '女';	
@@ -128,3 +129,50 @@ function myFun(v) {
 	sex	: 'm',
 	email	: 'ske@163.com'
 }
+```
+
+##全家桶
+```javascript
+function formateEmail(email) {
+	return 'Email: ' + email;
+}
+
+```
+
+```
+<each userList=u>
+	<div>{u.name}</div>
+	<div>{u.sex == 'm' ? '男' : '女'}</div>
+	<div>{u.email:formateEmail}</div>
+	<each u.hobbys=h>
+		<label>{h}</label>
+	</each>
+	<if u.sex == 'm'>
+		爱好数码
+	</if>
+	<if u.sex == 'f'>
+		爱好买衣服
+	</if>
+</each>
+```
+```javascript
+{
+	userList: [
+		{
+			name	: 'bonTemplate',
+			sex	: 'm',
+			email	: 'ske@163.com',
+			hobbys: [
+				'吃',　'喝',　'玩',　'乐'
+			]
+		}, {
+			name	: 'she',
+			sex	: 'f',
+			email	: 'fdsafs@163.com'，
+			hobbys: [
+				'吃',　'喝',　'玩',　'乐'
+			]
+		}
+	]
+}
+```
