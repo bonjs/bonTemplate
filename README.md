@@ -32,7 +32,7 @@ var data = {
 	email	: 'ske@163.com'
 }
 ```
-####调用方式
+##调用方式
 ```javascript
 bon.complier(document.getElementById('tpl').innerHTML);
 var html = bon.render(data);
@@ -40,7 +40,7 @@ a.innerHTML = html;
 ```
 
 
-###可嵌套的循环标签
+##可嵌套的循环标签
 ```
 <each userList=u>
 	<div>{u.name}</div>
@@ -73,7 +73,7 @@ a.innerHTML = html;
 }
 ```
 
-###条件标签
+##条件标签
 ```
 <div>
 	<div>{u.name}</div>
@@ -92,7 +92,7 @@ a.innerHTML = html;
 }
 ```
 
-###表达式
+##表达式
 ```
 <div>
 	<div>{u.name}</div>
@@ -108,7 +108,7 @@ a.innerHTML = html;
 }
 ```
 
-###自定义格式化函数
+##自定义格式化函数
 ```javascript
 function myFun(v) {
 	return v == 'm' ? '男' : '女';	
@@ -130,7 +130,7 @@ function myFun(v) {
 }
 ```
 
-###全家桶
+##全家桶
 ```javascript
 function formateEmail(email) {
 	return 'Email: ' + email;
