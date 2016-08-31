@@ -128,13 +128,21 @@ function myFun(v) {
 	sex	: 'm',
 	email	: 'ske@163.com'
 }
+```
 
 ###全家桶
+```javascript
+function formateEmail(email) {
+	return 'Email: ' + email;
+}
+
+```
+
 ```
 <each userList=u>
 	<div>{u.name}</div>
 	<div>{u.sex == 'm' ? '男' : '女'}</div>
-	<div>{u.email}</div>
+	<div>{u.email:formateEmail}</div>
 	<each u.hobbys=h>
 		<label>{h}</label>
 	</each>
