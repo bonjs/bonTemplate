@@ -1,5 +1,4 @@
-﻿
-/**
+﻿/**
 	author	: Alex
 	email	: ske@163.com
 	高效率
@@ -11,32 +10,31 @@
 */
 var bon = function() {
 	
-	var customTagsReg		= /<\/?(?:each|if)\s?[^>]*>/g; // /<\/?each\s?[^>]*>|<\/?if\s?[^>]*>/g;
-	var eachAttributeReg 	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
-	var ifAttributeReg 		= /<if\s+([^>]+)\s*>/g;
+	var customTagsReg     	= /<\/?(?:each|if)\s?[^>]*>/g;
+	var ifAttributeReg    	= /<if\s+([^>]+)\s*>/g;
+	var eachAttributeReg   	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
 	
 	var isES5 = !!Object.defineProperty;
+	var cache = {};
+	
 	return {
-		render: function(rootData, html) {
-			html && this.complier(html);
-		
-			var tpl = this.template;
-		
-			// 弃用效率低的with
-			//eval('var compilerTpl = []; with(data) { ' + tpl + '}');
-			var compilerTpl = isES5 ? '' : []; 
-			eval(tpl);
-			
-			var result = isES5 ? compilerTpl : compilerTpl.join('');
-			compilerTpl = null;
-			return result;
+		render: function(data, rawHtml) {
+			if(cache[rawHtml]) {
+				return cache[rawHtml].call(data);
+			}
+			this.complier(rawHtml);			
+			return cache[rawHtml].call(data);
 		},
-		complier: function(html) {
-			html = html.replace(/\s*\n\s*/g, '');
+		complier: function(rawHtml) {
+			
+			html = rawHtml.replace(/\s*\n\s*/g, '');
 			var htmlTags 	= html.split(customTagsReg);	// html标签
 			var customTags 	= html.match(customTagsReg);	// 自定义标签（<each><if>）
 			
 			var len = Math.max(htmlTags ? htmlTags.length : 0, customTags ? customTags.length : 0);
+		
+			var statementHeader = 'var compilerTpl = ' + (isES5 ? '""' : '[]') + ';\n';
+			var statementFooter = 'return ' + (isES5 ? 'compilerTpl; \n' : 'compilerTpl.join("");\n');
 		
 			var statement = isES5 ? '' : [];
 			for(var i = 0; i < len; i ++) {
@@ -49,32 +47,39 @@ var bon = function() {
 						}
 						
 						// 如果没有.符号，判断key前缀（如果有）或key在当前环境是否存在，如不存在，取根级的，加前缀data
-						return ["' + ", (fn || ""), "(typeof ", k, " == \"undefined\" || ", k, " == \"\" ? rootData.", k, " : ", k, ") + '"].join('');
+						return ["' + ", (fn || ""), "(typeof ", k, " == \"undefined\" || ", k, " == \"\" ? this.", k, " : ", k, ") + '"].join('');
 					});
 					isES5 ? statement += "compilerTpl += ('" + hTag + "'); \n" : statement.push("compilerTpl.push('" + hTag + "'); \n");
 				}
 				if(customTags && customTags[i]) {
 					var cTag = customTags[i];
-					cTag = cTag.replace(eachAttributeReg, function(x, arrVar, itemVar, countVar, indexVar) {
-						return 'var arr = typeof ' + arrVar + ' == "undefined" ? rootData.' + arrVar + ' : ' + arrVar + '; \narr.forEach(function(' + itemVar + ', ' + indexVar + ') { \n';
+					cTag = cTag.replace(eachAttributeReg, function(x, arr, item, count, index) {
+						var id 			= 'v_' + Math.random().toString(36).slice(2, 8);
+						var arrVar 		= id + '_arr';
+						var itemVar 	= id + '_' + item + '_it';
+						var indexVar 	= id + '_i';
+						return 'var ' + arrVar + ' = typeof ' + arr + ' == "undefined" ? this.' + arr + ' : ' + arr + '; \n' + 
+						'for(var ' + indexVar + ' = 0; ' + indexVar + ' < ' + arrVar + '.length; ' + indexVar + ' ++) {\n' +
+						'	var ' + item + ' = ' + arrVar + '[' + indexVar + '];\n';
+						
 					});
 					
 					cTag = cTag.replace(ifAttributeReg, function(x, ifExpression) {
 					
 						// 判断key前缀（如果有）或key在当前环境是否存在，如不存在，取根级的，加前缀data
 						ifExpression = ifExpression.replace(/\b(?:([\w]+)[\w\[\]]*)(?:\.\w+)?\b(?!['".])/g, function(x, a) {
-							return '(typeof ' + a + ' == "undefined" || ' + a + ' == "" ? rootData.' + x + ' : ' + x + ')';
+							return '(typeof ' + a + ' == "undefined" || ' + a + ' == "" ? this.' + x + ' : ' + x + ')';
 						});
 						
 						return 'if(' + ifExpression + ') {\n';
-						//return 'if(' + v1 + ' == "' + v2 + '") { \n';
-					}).replace(/<\/if>/g, '}\n').replace(/<\/each>/g, '});\n');
+					}).replace(/<\/if>/g, '}\n').replace(/<\/each>/g, '}\n');
 					
 					isES5 ? statement += cTag : statement.push(cTag);
 				}
 			}
-			this.template = isES5 ? statement : statement.join('');
-			statement = customTags = htmlTags = null;
+			statement = isES5 ? statement : statement.join('');
+			cache[rawHtml] = new Function(statementHeader + statement + statementFooter);
+			statement = statementHeader = statementFooter = customTags = htmlTags = null;
 		}
 	}
 }();
