@@ -1,12 +1,19 @@
-
+﻿
 /**
-	
+	author	: Alex
+	email	: ske@163.com
+	高效率
+	支持循环<each>
+	支持<if>
+	支持嵌套
+	支持表达式
+	支持自定义格式化函数
 */
 var bon = function() {
 	
-	var customTagsReg		= /<\/?each\s?[^>]*>|<\/?if\s?[^>]*>/g;
-	var eachAttributeReg 	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
-	var ifAttributeReg 		= /<if\s+([^>]+)\s*>/g;
+	var customTagsReg     	= /<\/?(?:each|if)\s?[^>]*>/g; // /<\/?each\s?[^>]*>|<\/?if\s?[^>]*>/g;
+	var eachAttributeReg   	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
+	var ifAttributeReg    	= /<if\s+([^>]+)\s*>/g;
 	
 	var isES5 = !!Object.defineProperty;
 	return {
