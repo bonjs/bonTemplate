@@ -1,7 +1,7 @@
 {
-  "name": "i",
+  "name": "bonTemplate",
   "version": "1.0.0",
-  "description": "",
+  "description": "高效，轻量，优雅的模板引擎",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
