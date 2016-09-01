@@ -36,10 +36,10 @@ var bon = function() {
 			
 			var len = Math.max(htmlTags ? htmlTags.length : 0, customTags ? customTags.length : 0);
 		
-			var statementHeader = 'var compilerTpl = ' + (isES5 ? '""' : '[]') + ';\n';
-			var statementFooter = 'return ' + (isES5 ? 'compilerTpl; \n' : 'compilerTpl.join("");\n');
+			var statementHeader = 'var compilerTpl = "";\n';
+			var statementFooter = 'return compilerTpl;\n';
 		
-			var statement = isES5 ? '' : [];
+			var statement = '';
 			for(var i = 0; i < len; i ++) {
 				if(htmlTags && htmlTags[i]) {
 					var hTag = htmlTags[i];
@@ -52,7 +52,7 @@ var bon = function() {
 						// 如果没有.符号，判断key前缀（如果有）或key在当前环境是否存在，如不存在，取根级的，加前缀data
 						return ["' + ", (fn || ""), "(typeof ", k, " == \"undefined\" || ", k, " == \"\" ? this.", k, " : ", k, ") + '"].join('');
 					});
-					isES5 ? statement += "compilerTpl += ('" + hTag + "'); \n" : statement.push("compilerTpl.push('" + hTag + "'); \n");
+					statement += "compilerTpl += ('" + hTag + "'); \n";
 				}
 				if(customTags && customTags[i]) {
 					var cTag = customTags[i];
@@ -77,10 +77,9 @@ var bon = function() {
 						return 'if(' + ifExpression + ') {\n';
 					}).replace(/<\/if>/g, '}\n').replace(/<\/each>/g, '}\n');
 					
-					isES5 ? statement += cTag : statement.push(cTag);
+					statement += cTag
 				}
 			}
-			statement = isES5 ? statement : statement.join('');
 			cache[rawHtml] = new Function(statementHeader + statement + statementFooter);
 			statement = statementHeader = statementFooter = customTags = htmlTags = null;
 		}
