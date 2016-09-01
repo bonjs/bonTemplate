@@ -10,8 +10,8 @@
 */
 var bon = function() {
 	
-	var customTagsReg     	= /<\/?(?:each|if)\s?[^>]*>/g;
-	var ifAttributeReg    	= /<if\s+([^>]+)\s*>/g;
+	var customTagsReg     	= /<\/?(?:each|if)\s?(?:[^<>=\s]+\s*(?:[><=!]=?|[&|]{2})\s*[^<>=\s]+)*\s*>/g;	//	/<\/?(?:each|if)\s?[^>]*>/g;
+	var ifAttributeReg    	= /<if\s+((?:[^<>=\s]+\s*(?:[><=!]=?|[&|]{2})\s*[^<>=\s]+))*\s*>/g; // 	/<if\s+([^>]+)\s*>/g;
 	var eachAttributeReg   	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
 	
 	var cache = {};
@@ -20,10 +20,7 @@ var bon = function() {
 
 	return {
 		render: function(data, rawHtml) {
-			if(cache[rawHtml]) {
-				return cache[rawHtml].call(data);
-			}
-			this.complier(rawHtml);			
+			cache[rawHtml] || this.complier(rawHtml);
 			return cache[rawHtml].call(data);
 		},
 		complier: function(rawHtml) {
@@ -44,14 +41,19 @@ var bon = function() {
 			for(var i = 0; i < len; i ++) {
 				if(htmlTags && htmlTags[i]) {
 					var hTag = htmlTags[i];
-					
-					hTag = hTag.replace(/{(.*?)(?:\:(\w+))?}/g, function(x, k, fn) {
-						if(/\./.test(k)) {		// 如果有.标点，直接取值
-							return ["' + ", (fn || ""), "(" , k , ") + '"].join('');
-						}
+					hTag = hTag.replace(/{(.*?)(?:\:(\w+))?}/g, function(x, expression, fn) {	// 取冒号前面的表达式（如果有冒号）
+						//return expression.replace(/\b(?:([\w.]+)[\w\[\]]*)\b(?!['".])/g, function(xx, a) {	　// 取表达式中的变量（特点是后面没有引号）
 						
-						// 如果没有.符号，判断key前缀（如果有）或key在当前环境是否存在，如不存在，取根级的，加前缀data
-						return ["' + ", (fn || ""), "(typeof ", k, " == \"undefined\" || ", k, " == \"\" ? this.", k, " : ", k, ") + '"].join('');
+						
+							/**
+								//\b(?:([\w]+)[\w\[\]]*)(?:\.\w+)?\b(?!['".])
+								如果有点号，第二分组为前缀，否则为本身
+								xx		a
+								u.name	u
+								name	name
+							*/
+							return ["' + ", (fn || ""), "(" , expression , ") + '"].join('');
+						//});
 					});
 					statement += "compilerTpl += ('" + hTag + "'); \n";
 				}
@@ -62,7 +64,7 @@ var bon = function() {
 						var arrVar 		= id + '_arr';
 						var itemVar 	= id + '_' + item + '_it';
 						var indexVar 	= id + '_i';
-						return 'var ' + arrVar + ' = typeof ' + arr + ' == "undefined" ? this.' + arr + ' : ' + arr + '; \n' + 
+						return 'var ' + arrVar + ' = ' + arr + '; \n' + 
 						'for(var ' + indexVar + ' = 0; ' + indexVar + ' < ' + arrVar + '.length; ' + indexVar + ' ++) {\n' +
 						'	var ' + item + ' = ' + arrVar + '[' + indexVar + '];\n';
 						
@@ -71,9 +73,9 @@ var bon = function() {
 					cTag = cTag.replace(ifAttributeReg, function(x, ifExpression) {
 					
 						// 判断key前缀（如果有）或key在当前环境是否存在，如不存在，取根级的，加前缀data
-						ifExpression = ifExpression.replace(/\b(?:([\w]+)[\w\[\]]*)(?:\.\w+)?\b(?!['".])/g, function(x, a) {
-							return '(typeof ' + a + ' == "undefined" || ' + a + ' == "" ? this.' + x + ' : ' + x + ')';
-						});
+						//ifExpression = ifExpression.replace(/\b(?:([\w]+)[\w\[\]]*)(?:\.\w+)?\b(?!['".])/g, function(x, a) {
+						//	return '(typeof ' + a + ' == "undefined" || ' + a + ' == "" ? this.' + x + ' : ' + x + ')';
+						//});
 						
 						return 'if(' + ifExpression + ') {\n';
 					}).replace(/<\/if>/g, '}\n').replace(/<\/each>/g, '}\n');

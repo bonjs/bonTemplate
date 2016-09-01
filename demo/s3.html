@@ -32,13 +32,14 @@
   <script src="//cdn.bootcss.com/jquery/1.12.1/jquery.js"></script>
 </head>
 <body>
+	<h3>bonTemplate速度测试</h3>
 	<div id=a></div>
 	<script src="/src/bon.js"></script>
 	<script>
 		
 		var html = [
 			'<ul>',
-				'<each list=u>',
+				'<each this.list=u>',
 					'<li>用户: {u.user} / 网站：{u.site}</li>',
 				'</each>',
 			'</ul>',
