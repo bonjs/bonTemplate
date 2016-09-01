@@ -14,9 +14,10 @@ var bon = function() {
 	var ifAttributeReg    	= /<if\s+([^>]+)\s*>/g;
 	var eachAttributeReg   	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
 	
-	var isES5 = !!Object.defineProperty;
 	var cache = {};
 	
+	var isIE8 = /msie 8\.0/i.test(window.navigator.userAgent.toLowerCase());
+
 	return {
 		render: function(data, rawHtml) {
 			if(cache[rawHtml]) {
@@ -28,15 +29,18 @@ var bon = function() {
 		complier: function(rawHtml) {
 			
 			html = rawHtml.replace(/\s*\n\s*/g, '');
-			var htmlTags 	= html.split(customTagsReg);	// html标签
+			
+			var symbol = '3F2D04E0-4F8U-11D3-9A0C-0A05E82C33W1';
+			//本来要直接用html.split(customTagsReg) 但在ie8下会把匹配出来的空字符串给吞掉，故采用此方法兼容
+			var htmlTags 	= isIE8 ? html.replace(customTagsReg, symbol).split(symbol) : html.split(customTagsReg);	// html标签 
 			var customTags 	= html.match(customTagsReg);	// 自定义标签（<each><if>）
 			
 			var len = Math.max(htmlTags ? htmlTags.length : 0, customTags ? customTags.length : 0);
 		
-			var statementHeader = 'var compilerTpl = ' + (isES5 ? '""' : '[]') + ';\n';
-			var statementFooter = 'return ' + (isES5 ? 'compilerTpl; \n' : 'compilerTpl.join("");\n');
+			var statementHeader = 'var compilerTpl = "";\n';
+			var statementFooter = 'return compilerTpl;\n';
 		
-			var statement = isES5 ? '' : [];
+			var statement = '';
 			for(var i = 0; i < len; i ++) {
 				if(htmlTags && htmlTags[i]) {
 					var hTag = htmlTags[i];
@@ -49,7 +53,7 @@ var bon = function() {
 						// 如果没有.符号，判断key前缀（如果有）或key在当前环境是否存在，如不存在，取根级的，加前缀data
 						return ["' + ", (fn || ""), "(typeof ", k, " == \"undefined\" || ", k, " == \"\" ? this.", k, " : ", k, ") + '"].join('');
 					});
-					isES5 ? statement += "compilerTpl += ('" + hTag + "'); \n" : statement.push("compilerTpl.push('" + hTag + "'); \n");
+					statement += "compilerTpl += ('" + hTag + "'); \n";
 				}
 				if(customTags && customTags[i]) {
 					var cTag = customTags[i];
@@ -74,10 +78,9 @@ var bon = function() {
 						return 'if(' + ifExpression + ') {\n';
 					}).replace(/<\/if>/g, '}\n').replace(/<\/each>/g, '}\n');
 					
-					isES5 ? statement += cTag : statement.push(cTag);
+					statement += cTag
 				}
 			}
-			statement = isES5 ? statement : statement.join('');
 			cache[rawHtml] = new Function(statementHeader + statement + statementFooter);
 			statement = statementHeader = statementFooter = customTags = htmlTags = null;
 		}
