@@ -1,5 +1,5 @@
 # bonTemplate
-* 高效(100条数据执行10000次耗时70多ms，我本机上的测试结果，视电脑配置)
+* 高效(100条数据执行10000次一共耗时50多ms，我本机上的测试结果，视电脑配置)
 * 轻量(压缩前也才3K多)
 * 支持循环```<each>```
 * 支持条件判断```<if>```
@@ -80,7 +80,7 @@ a.innerHTML = html;
 	<div>{this.name}</div>
 	<div>{this.sex}</div>
 	<div>{this.email}</div>
-	<if this..sex == 'm'>
+	<if this.sex == 'm'>
 		爱好数码
 	</if>
 </div>
