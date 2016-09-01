@@ -28,7 +28,10 @@ var bon = function() {
 		complier: function(rawHtml) {
 			
 			html = rawHtml.replace(/\s*\n\s*/g, '');
-			var htmlTags 	= html.split(customTagsReg);	// html标签
+			
+			var symbol = '3F2D04E0-4F8U-11D3-9A0C-0A05E82C33W1';
+			//本来要直接用html.split(customTagsReg) 但在ie8下会把匹配出来的空字符串给吞掉，故采用此方法兼容
+			var htmlTags 	= html.replace(customTagsReg, symbol).split(symbol);	// html标签 
 			var customTags 	= html.match(customTagsReg);	// 自定义标签（<each><if>）
 			
 			var len = Math.max(htmlTags ? htmlTags.length : 0, customTags ? customTags.length : 0);
