@@ -36,10 +36,20 @@
 	<script>
 		
 		var html = [
-			'<if t.name=="sun">',
-				'<li class="title">显示</li>',
-			'</if>',
+			'<div>1{this.name:test}</div>',
+			'<div>2{this.t.testName}</div>',
+			'<div>3{this.t.o.name:test}</div>',
+			'<each this.arr=u>',
+				'<div>4{u.name:test}</div>',
+			'</each>',
+			'<if this.name="sun">',
+				'孙长老',
+			'</if>'
 		].join('');
+		
+		function test(v) {
+			return '*' + v
+		}
 		
 		var data = {
 			name: 'sun',
@@ -51,7 +61,10 @@
 				}	
 			],
 			t: {
-				name: 'sun'
+				testName: 'sun',
+				o: {
+					name:'魂牵梦萦'
+				}
 			}
 		}
 		

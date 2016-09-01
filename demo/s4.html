@@ -40,8 +40,8 @@
 		
 		var html = [
 			'<div>',
-				'<div>{title}</div>',
-				'<each departList=a>',
+				'<div>{this.title}</div>',
+				'<each this.departList=a>',
 					'<li class=title>{a.departName} 一级</li>',
 					'<each a.group=b>',
 						'<li class=title2>{b.groupName}　二级</li>',
