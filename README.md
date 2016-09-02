@@ -80,7 +80,7 @@ a.innerHTML = html;
 	<div>{this.name}</div>
 	<div>{this.sex}</div>
 	<div>{this.email}</div>
-	<if this..sex == 'm'>
+	<if this.sex == 'm'>
 		爱好数码
 	</if>
 </div>
