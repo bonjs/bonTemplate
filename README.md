@@ -20,16 +20,16 @@ node app
 ####模板
 ```
 <script id=tpl type="html">
-	<div>{name}</div>
-	<div>{sex}</div>
-	<div>{email}</div>
+	<div>{this.name}</div>
+	<div>{this.sex}</div>
+	<div>{this.email}</div>
 </script>
 ```
 ####数据
 ```javascript
 var data = {
 	name	: 'bonTemplate',
-	sex	: 'm',
+	sex		: 'm',
 	email	: 'ske@163.com'
 }
 ```
@@ -43,7 +43,7 @@ a.innerHTML = html;
 
 ##可嵌套的循环标签
 ```
-<each userList=u>
+<each this.userList=u>
 	<div>{u.name}</div>
 	<div>{u.sex}</div>
 	<div>{u.email}</div>
@@ -57,14 +57,14 @@ a.innerHTML = html;
 	userList: [
 		{
 			name	: 'bonTemplate',
-			sex	: 'm',
+			sex		: 'm',
 			email	: 'ske@163.com',
 			hobbys: [
 				'吃',　'喝',　'玩',　'乐'
 			]
 		}, {
 			name	: 'bonTemplate',
-			sex	: 'm',
+			sex		: 'm',
 			email	: 'ske@163.com'，
 			hobbys: [
 				'吃',　'喝',　'玩',　'乐'
@@ -77,10 +77,10 @@ a.innerHTML = html;
 ##条件标签
 ```
 <div>
-	<div>{u.name}</div>
-	<div>{u.sex}</div>
-	<div>{u.email}</div>
-	<if u.sex == 'm'>
+	<div>{this.name}</div>
+	<div>{this.sex}</div>
+	<div>{this.email}</div>
+	<if this..sex == 'm'>
 		爱好数码
 	</if>
 </div>
@@ -88,7 +88,7 @@ a.innerHTML = html;
 ```javascript
 {
 	name	: 'bonTemplate',
-	sex	: 'm',
+	sex		: 'm',
 	email	: 'ske@163.com'
 }
 ```
@@ -96,15 +96,15 @@ a.innerHTML = html;
 ##表达式
 ```
 <div>
-	<div>{u.name}</div>
-	<div>{u.sex == 'm' ? '男' : '女'}</div>
-	<div>{u.email}</div>
+	<div>{this.name}</div>
+	<div>{this.sex == 'm' ? '男' : '女'}</div>
+	<div>{this.email}</div>
 </div>
 ```
 ```javascript
 {
 	name	: 'bonTemplate',
-	sex	: 'm',
+	sex		: 'm',
 	email	: 'ske@163.com'
 }
 ```
@@ -118,15 +118,15 @@ function myFun(v) {
 
 ```
 <div>
-	<div>{u.name}</div>
-	<div>{u.sex:myFun}</div>
-	<div>{u.email}</div>
+	<div>{this.name}</div>
+	<div>{this.sex:myFun}</div>
+	<div>{this.email}</div>
 </div>
 ```
 ```javascript
 {
 	name	: 'bonTemplate',
-	sex	: 'm',
+	sex		: 'm',
 	email	: 'ske@163.com'
 }
 ```
@@ -140,7 +140,7 @@ function formateEmail(email) {
 ```
 
 ```
-<each userList=u>
+<each this.userList=u>
 	<div>{u.name}</div>
 	<div>{u.sex == 'm' ? '男' : '女'}</div>
 	<div>{u.email:formateEmail}</div>
@@ -160,14 +160,14 @@ function formateEmail(email) {
 	userList: [
 		{
 			name	: 'bonTemplate',
-			sex	: 'm',
+			sex		: 'm',
 			email	: 'ske@163.com',
 			hobbys: [
 				'吃',　'喝',　'玩',　'乐'
 			]
 		}, {
 			name	: 'she',
-			sex	: 'f',
+			sex		: 'f',
 			email	: 'fdsafs@163.com'，
 			hobbys: [
 				'吃',　'喝',　'玩',　'乐'

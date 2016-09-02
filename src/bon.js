@@ -73,9 +73,9 @@ var bon = function() {
 					cTag = cTag.replace(ifAttributeReg, function(x, ifExpression) {
 					
 						// 判断key前缀（如果有）或key在当前环境是否存在，如不存在，取根级的，加前缀data
-						ifExpression = ifExpression.replace(/\b(?:([\w]+)[\w\[\]]*)(?:\.\w+)?\b(?!['".])/g, function(x, a) {
-							return '(typeof ' + a + ' == "undefined" || ' + a + ' == "" ? this.' + x + ' : ' + x + ')';
-						});
+						//ifExpression = ifExpression.replace(/\b(?:([\w]+)[\w\[\]]*)(?:\.\w+)?\b(?!['".])/g, function(x, a) {
+						//	return '(typeof ' + a + ' == "undefined" || ' + a + ' == "" ? this.' + x + ' : ' + x + ')';
+						//});
 						
 						return 'if(' + ifExpression + ') {\n';
 					}).replace(/<\/if>/g, '}\n').replace(/<\/each>/g, '}\n');
