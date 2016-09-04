@@ -27,11 +27,12 @@
 		display:none;
 	}
   </style>
+  
+	<script src="/src/bon.js"></script>
 </head>
 <body>
 	<h3>bonTemplate条件测试</h3>
 	<div id=a></div>
-	
 	
 	<script type="html" id=tpl>
 		<div>城市名称:{this.name:formateCityName}</div>
@@ -43,22 +44,13 @@
 			人口大城市	
 		</if>
 		<each this.area=u>
-			<div>{u.name}</div>
+			<div class=title2>{u.name}</div>
 		</each>
 	</script>
 	
-	<script src="/src/bon.js"></script>
 	<script>
 		
 		var html = document.getElementById('tpl').innerHTML;
-		
-		function formateCityName(v) {
-			return v + '市'
-		}
-		
-		function formateOtherName(a) {
-			return a.join(',');
-		}
 		
 		var data = {
 			name: '北京',
@@ -79,6 +71,15 @@
 		
 		var h = bon.render(data, html);
 		a.innerHTML = h;
+		
+		
+		function formateCityName(v) {
+			return v + '市'
+		}
+		
+		function formateOtherName(a) {
+			return a.join(',');
+		}
 		
 		
 	</script>
