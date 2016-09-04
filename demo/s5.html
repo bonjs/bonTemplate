@@ -32,22 +32,25 @@
 	<h3>bonTemplate条件测试</h3>
 	<div id=a></div>
 	
+	
+	<script type="html" id=tpl>
+		<div>城市名称:{this.name:formateCityName}</div>
+		<div>国家:{this.country}</div>
+		<div>位置:{this.position.longitude + " " + this.position.latitude}</div>
+		<div>其他:{this.other.otherNames:formateOtherName}</div>
+		<div>人口:{this.population}万</div>
+		<if this.population >= 1000>
+			人口大城市	
+		</if>
+		<each this.area=u>
+			<div>{u.name}</div>
+		</each>
+	</script>
+	
 	<script src="/src/bon.js"></script>
 	<script>
 		
-		var html = [
-			'<div>城市名称:{this.name:formateCityName}</div>',
-			'<div>国家:{this.country}</div>',
-			'<div>位置:{this.position.longitude + " " + this.position.latitude}</div>',
-			'<div>其他:{this.other.otherNames:formateOtherName}</div>',
-			'<div>人口:{this.population}万</div>',
-			'<if this.population >= 1000>',
-				'人口大城市',	
-			'</if>',
-			'<each this.area=u>',
-				'<div>{u.name}</div>',
-			'</each>',
-		].join('');
+		var html = document.getElementById('tpl').innerHTML;
 		
 		function formateCityName(v) {
 			return v + '市'
