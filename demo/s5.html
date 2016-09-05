@@ -44,8 +44,8 @@
 		<if this.population >= 1000>
 			人口大城市	
 		</if>
-		<each this.area=u>
-			<div class=title2>{u.name}</div>
+		<each this.area=u count=i>
+			<div class=title2>{u.name} - {i}</div>
 		</each>
 	</script>
 	
