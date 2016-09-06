@@ -16,13 +16,14 @@ var bon = function() {
 	var eachAttributeReg	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
 	
 	var cache = {};
+	var fieldFn = {};
 	
 	var isIE8 = /msie 8\.0/i.test(window.navigator.userAgent.toLowerCase());
 	
 	var symbol = '3F2D04E0-4F8U-11D3-9A0C-0A05E82C33W1';
 
 	return {
-		render: function(data, rawHtml) {
+		render: function(rawHtml, data) {
 			cache[rawHtml] || this.complier(rawHtml);
 			return cache[rawHtml].call(data);
 		},
@@ -41,7 +42,7 @@ var bon = function() {
 				if(htmlTags && htmlTags[i]) {
 					var hTag = htmlTags[i];
 					hTag = hTag.replace(/{(.*?)(?:\:(\w+))?}/g, function(x, expression, fn) {	// 取冒号前面的表达式（如果有冒号）
-						return ["' + ", (fn || ""), "(" , expression , ") + '"].join('');
+						return ["' + ", (fieldFn[fn] || ""), "(" , expression , ") + '"].join('');
 					});
 					statement += "compilerTpl += ('" + hTag + "'); \n";
 				}
@@ -63,7 +64,7 @@ var bon = function() {
 						return 'if(' + ifExpression + ') {\n';
 					}).replace(/<\/if>/g, '}\n').replace(/<\/each>/g, '}\n');
 					
-					statement += cTag
+					statement += cTag;
 				}
 			}
 			
@@ -72,6 +73,11 @@ var bon = function() {
 			
 			cache[rawHtml] = new Function(statementHeader + statement + statementFooter);
 			statement = statementHeader = statementFooter = customTags = htmlTags = null;
+		},
+		addFun: function(fns) {
+			for(var fnName in fns) {
+				fieldFn[fnName] = fns[fnName];
+			}
 		}
 	}
 }();
