@@ -111,9 +111,11 @@ a.innerHTML = html;
 
 ##自定义格式化函数
 ```javascript
-function myFun(v) {
-	return v == 'm' ? '男' : '女';	
-}
+bon.addFun({
+	myFun : function(v) {
+		return v == 'm' ? '男' : '女';	
+	}
+});
 ```
 
 ```
@@ -133,10 +135,11 @@ function myFun(v) {
 
 ##全家桶
 ```javascript
-function formateEmail(email) {
-	return 'Email: ' + email;
-}
-
+bon.addFun({
+	formateEmail: function(email) {
+		return 'Email: ' + email;
+	}	
+})
 ```
 
 ```
