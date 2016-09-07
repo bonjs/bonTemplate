@@ -35,9 +35,9 @@ var data = {
 ```
 ####调用方式
 ```javascript
-bon.complier(document.getElementById('tpl').innerHTML);
-var html = bon.render(data);
-a.innerHTML = html;
+var html = document.getElementById('tpl').innerHTML
+var str = bon.render(html, data);
+a.innerHTML = str;
 ```
 
 
