@@ -18,7 +18,7 @@ var bon = function() {
 	var cache = {};
 	var fieldFn = {};
 	
-	var isIE8 = /msie 8\.0/i.test(window.navigator.userAgent.toLowerCase());
+	var isIE8 = !!window && /msie 8\.0/i.test(window.navigator.userAgent.toLowerCase());
 	
 	var symbol = '3F2D04E0-4F8U-11D3-9A0C-0A05E82C33W1';
 
