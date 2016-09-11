@@ -39,20 +39,23 @@
 	<h3>bonTemplate自定义扩展</h3>
 	<div id=a></div>
 	<script id=tpl type="html">
-		<div>{this.date:myTest}</div>
+		<div>{date:myTest}</div>
 	</script>
 	
 	<script>
-		function myTest(v) {
-			var m = /(\d{4})(\d{2})(\d{2})/.exec(v);
-			return m[1] + '年' + m[2] + '月' + m[3] + '日';
-		}
 		var data = {
 			date: '20160830'
 		}
 		
+		bon.addFun({
+			myTest: function(v) {
+				var m = /(\d{4})(\d{2})(\d{2})/.exec(v);
+				return m[1] + '年' + m[2] + '月' + m[3] + '日';
+			}
+		});
+		
 		var html = document.getElementById('tpl').innerHTML;
-		var h = bon.render(data, html);
+		var h = bon.render(html, data);
 		a.innerHTML = h;
 		
 		
