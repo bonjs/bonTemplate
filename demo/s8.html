@@ -35,16 +35,16 @@
 	<div id=a></div>
 	
 	<script type="html" id=tpl>
-		<div>城市名称:{this.name}</div>
-		<div>国家:{this.country}</div>
-		<div>奥运会时间:{this.olympicsTime:formateTime}</div>
-		<div>位置:{this.position.longitude + " " + this.position.latitude}</div>
-		<div>其他:{this.other.otherNames:formateOtherName}</div>
-		<div>人口:{this.population}万</div>
-		<if this.population >= 1000>
+		<div>城市名称:{name}</div>
+		<div>国家:{country}</div>
+		<div>奥运会时间:{olympicsTime:formateTime}</div>
+		<div>位置:{position.longitude + " " + position.latitude}</div>
+		<div>其他:{other.otherNames:formateOtherName}</div>
+		<div>人口:{population}万</div>
+		<if population >= 1000>
 			人口大城市	
 		</if>
-		<each this.area=u count=i>
+		<each area=u count=i>
 			<div class=title2>{u.name} - {i}</div>
 		</each>
 	</script>
