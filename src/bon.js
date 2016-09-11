@@ -27,6 +27,11 @@ var bon = function() {
 			return (data[prefix] !== undefined ? 'this.' : '') + prefix + other;
 		});
 	}
+	
+	/**
+		对反斜线的处理
+		\b{.*?[^\\]}
+	*/
 
 	return {
 		render: function(rawHtml, data) {
