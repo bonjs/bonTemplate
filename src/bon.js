@@ -23,8 +23,8 @@ var bon = function() {
 	var symbol = '3F2D04E0-4F8U-11D3-9A0C-0A05E82C33W1';
 	
 	function addThisPrefix(exp, data) {	// 全局的表达式前加this
-		return exp.replace(/\b(?:(\w+)([\w.\[\]]*))\b(?!['"])/g, function(x, a, b) {
-			return (data[a] !== undefined ? 'this.' : '') + a + b;
+		return exp.replace(/\b(?:(\w+)([\w.\[\]]*))\b(?!['"])/g, function(x, prefix, other) {
+			return (data[a] !== undefined ? 'this.' : '') + prefix + other;
 		});
 	}
 
