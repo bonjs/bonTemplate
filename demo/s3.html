@@ -39,7 +39,7 @@
 		
 		var html = [
 			'<ul>',
-				'<each this.list=u>',
+				'<each list=u>',
 					'<li>用户: {u.user} / 网站：{u.site}</li>',
 				'</each>',
 			'</ul>',
@@ -48,7 +48,7 @@
 		$.get('/data', function(data) {
 			var start = new Date().getTime();
 			for(var i = 0; i < 10000; i ++) {
-				var h = bon.render(data, html);
+				var h = bon.render(html, data);
 			}
 			var time = new Date().getTime() - start;
 			//a.innerHTML = h;
