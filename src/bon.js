@@ -48,7 +48,9 @@ var bon = function() {
 				if(htmlTags && htmlTags[i]) {
 					var hTag = htmlTags[i];
 					hTag = hTag.replace(/{(.*?)(?:\:(\w+))?}/g, function(x, expression, fn) {	// 取冒号前面的表达式（如果有冒号）
+
 						expression = addThisPrefix(expression, data);
+
 						return ["' + ", (fieldFn[fn] || ""), "(" , expression , ") + '"].join('');
 					});
 					statement += "compilerTpl += ('" + hTag + "'); \n";
