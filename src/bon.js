@@ -24,7 +24,7 @@ var bon = function() {
 	
 	function addThisPrefix(exp, data) {	// 全局的表达式前加this
 		return exp.replace(/\b(?:(\w+)([\w.\[\]]*))\b(?!['"])/g, function(x, a, b) {
-			return (data[a] !== undefined ? 'this.' + a : a) + b
+			return (data[a] !== undefined ? 'this.' : '') + a + b;
 		});
 	}
 
