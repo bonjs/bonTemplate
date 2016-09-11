@@ -21,13 +21,19 @@ var bon = function() {
 	var isIE8 = !!window && /msie 8\.0/i.test(window.navigator.userAgent.toLowerCase());
 	
 	var symbol = '3F2D04E0-4F8U-11D3-9A0C-0A05E82C33W1';
+	
+	function addThisPrefix(exp, data) {	// 全局的表达式前加this
+		return exp.replace(/\b(?:(\w+)([\w.\[\]]*))\b(?!['"])/g, function(x, prefix, other) {
+			return (data[prefix] !== undefined ? 'this.' : '') + prefix + other;
+		});
+	}
 
 	return {
 		render: function(rawHtml, data) {
-			cache[rawHtml] || this.complier(rawHtml);
+			cache[rawHtml] || this.complier(rawHtml, data);
 			return cache[rawHtml].call(data);
 		},
-		complier: function(rawHtml) {
+		complier: function(rawHtml, data) {
 			
 			var html = rawHtml.replace(/\s*\n\s*/g, '');
 			
@@ -41,14 +47,24 @@ var bon = function() {
 			for(var i = 0; i < len; i ++) {
 				if(htmlTags && htmlTags[i]) {
 					var hTag = htmlTags[i];
-					hTag = hTag.replace(/{(.*?)(?:\:(\w+))?}/g, function(x, expression, fn) {	// 取冒号前面的表达式（如果有冒号）
-						return ["' + ", (fieldFn[fn] || ""), "(" , expression , ") + '"].join('');
+					
+					// 原{(.*?)(?:\:(\w+))?}
+					// ([^\\]|^){(.*?)(?:\:(\w+)[^\\])?}
+					// 如果大括号的左右标记前带有反斜线, 则忽略此标记
+					// js不支持逆向环视,只好用这种方式
+					hTag = hTag.replace(/([^\\]|^){(.*?[^\\])(?:\:(\w+[^\\]))?}/g, function(x, other, expression, fn) {	// 取冒号前面的表达式（如果有冒号）
+
+						expression = addThisPrefix(expression, data);
+
+						return [other, "' + ", (fieldFn[fn] || ""), "(" , expression , ") + '"].join('');
 					});
 					statement += "compilerTpl += ('" + hTag + "'); \n";
 				}
 				if(customTags && customTags[i]) {
 					var cTag = customTags[i];
 					cTag = cTag.replace(eachAttributeReg, function(x, arr, item, count, index) {
+					
+						arr = addThisPrefix(arr, data);
 					
 						var id 			= 'v_' + Math.random().toString(36).slice(2, 8);
 						var arrVar 		= id + '_arr';
@@ -61,6 +77,7 @@ var bon = function() {
 					});
 					
 					cTag = cTag.replace(ifAttributeReg, function(x, ifExpression) {
+						ifExpression = addThisPrefix(ifExpression, data);
 						return 'if(' + ifExpression + ') {\n';
 					}).replace(/<\/if>/g, '}\n').replace(/<\/each>/g, '}\n');
 					
@@ -79,5 +96,5 @@ var bon = function() {
 				fieldFn[fnName] = fns[fnName];
 			}
 		}
-	}
+	};
 }();
