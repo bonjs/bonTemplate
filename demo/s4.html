@@ -40,8 +40,8 @@
 		
 		var html = [
 			'<div>',
-				'<div>{this.title}</div>',
-				'<each this.departList=a>',
+				'<div>{title}</div>',
+				'<each departList=a>',
 					'<li class=title>{a.departName} 一级</li>',
 					'<each a.group=b>',
 						'<li class=title2>{b.groupName}　二级</li>',
@@ -73,7 +73,7 @@
 		
 		$.get('/getData', function(data) {
 			var start = new Date().getTime();
-			var h = bon.render(data, html);
+			var h = bon.render(html, data);
 			
 			var time = new Date().getTime() - start;
 			a.innerHTML = h;
