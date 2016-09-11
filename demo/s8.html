@@ -71,17 +71,20 @@
 			}
 		}
 		
-		var h = bon.render(data, html);
+		bon.addFun({
+			formateTime: function(v) {
+				var matches = /(\d{4})(\d{2})(\d{2})/.exec(v);
+				return matches[1] + '年' + matches[2] + '月' + matches[3] + '日';
+			},
+			formateOtherName: function(a) {
+				return a.join(',');
+			}
+		});
+		
+		var h = bon.render(html, data);
 		a.innerHTML = h;
 		
-		function formateTime(v) {
-			var matches = /(\d{4})(\d{2})(\d{2})/.exec(v);
-			return matches[1] + '年' + matches[2] + '月' + matches[3] + '日';
-		}
 		
-		function formateOtherName(a) {
-			return a.join(',');
-		}
 		
 		
 	</script>
