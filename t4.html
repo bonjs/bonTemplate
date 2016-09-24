@@ -26,25 +26,39 @@
 				]
 			};
 			
-			var html = [
+			window.html = [
 				'<div>',
 					'<each list="u11">',
 						'<div>{一级１}</div>',
 						'<each u1.list=u2>',
 							'<div>{二级１}</div>',
-							'<each a=a>fdaf</each>',
 						'</each>',
 					'</each>',
-					'<each list="u12">',
-						'<div>{一级２}</div>',
-					'</each>',
-				'</div>'
+				'</div>',
+				'<each list="u12">',
+					'<div>{一级２}</div>',
+				'</each>',
 			].join('');
 			
-			console.log(html);
+			/**
+				１，　获取一级block, 将block替换成唯一的占位符
+				２，　获取子级block, 
 			
-			EachBlock.prototype.html = html;
+			*/
 			
+			Block.prototype.html = html;
+			//console.log(html);
+			var a = t(html);
+			a.forEach(function(it, i) {
+				console.log('-', it.getBlocks());
+			});
+			
+		};
+		
+		
+		
+		function t(html) {
+		
 			var reg = /<\/?each[^>]*>/g;
 			var r, stack = [], a = [];
 			while(r = reg.exec(html)) {
@@ -55,7 +69,7 @@
 					var arrVar = result[1];
 					var itemVar = result[2];
 					
-					var eb = new EachBlock({
+					var eb = new Block({
 						begin: r.index + r[0].length,	// 开始位置
 						arrVar: arrVar,
 						itemVar: itemVar
@@ -74,27 +88,26 @@
 					//a.push(eb);
 				}
 			};
-			
-			a.forEach(function(it, i) {
-				console.log('-', it.getOriginalHtml());
-				//console.log(it);
-			});
-		};
 		
-		function EachBlock(opt) {
+			return a;
+		}
+		
+		function Block(opt) {
 			for(var k in opt) {
 				this[k] = opt[k];
 			}
 		} 
-		EachBlock.prototype = {
+		Block.prototype = {
 			getOriginalHtml: function() {
 				return this.html.substring(this.begin, this.end);
 			},
 			getRenderHtml: function() {
 				return 'test';
+			},
+			getBlocks: function() {
+				return t(this.getOriginalHtml())
 			}
 		};
-		
 		
 		
 	</script>
