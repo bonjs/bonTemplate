@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hexo</title>
+  <style>
+  	body *{
+  		padding: 0px;
+  		margin: 0px;
+  		font-size: 14px;
+  	}
+  	body * {
+  		border-bottom: 1px red solid;
+  	}
+  	.title {
+  		font-weight: bold;
+  		background: #acc;
+  		padding-left: 10px
+  	}
+  	.title2 {
+  		background: #ddd;
+  		list-style: none;
+  		padding-left: 60px
+  	}
+  	li, div{
+  		padding: 3px 0 3px 110px;
+  	}
+  </style>
+  <script src="//cdn.bootcss.com/jquery/1.12.1/jquery.js"></script>
+</head>
+<body>
+	<div id=a style="height: 100px"></div>
+	<script>
+			
+		$.get('getData', function(data) {
+			var html = [
+				'<div>{title}</div>',
+				'<div>',
+					'<each departList="d">',
+						'<div class="title">{d.departName}-{d.leaderName}</div>',
+						'<each d.group=g>',
+							'<li class="title2">{g.groupName}组</li>',
+							'<each g.userList=u>',
+								'<li>{u.name}({u.sex == "m" ?　"男" : "女"}) ({d.departName})</li>',
+							'</each>',
+						'</each>',
+					'</each>',
+				'</div>',
+			].join('');
+			
+			var d = new Date().getTime();
+			var html = bonTemplate(html, data);
+			document.body.innerHTML = html;
+			console.log('time:', new Date().getTime() - d);
+		
+		});
+		
+		function bonTemplate(html, data) {
+
+			return new Node({
+				template: html,
+				scopeChain: [{
+					scope: null,
+					data: data
+				}]
+			}).getHtml();
+		}
+		
+		
+		function EachBlock(opts) {
+			for(var k in opts) {
+				this[k] = opts[k];
+			}
+			this.childNodes = this.getNodes();
+		}
+		EachBlock.prototype = {
+			getHtml: function() {
+				var me = this;
+				
+				var html = [];
+				this.childNodes.forEach(function(c, i) {
+					html.push(c.getHtml());
+				});
+				return html.join('');
+			},
+			getNodes: function() {
+				var me = this;
+				var nodes = [];
+				
+				var matchs = /^(?:(\w+)\.)?(\w+)$/.exec(this.arrVar);
+				var prefix = matchs[1], suffix = matchs[2];
+				
+				var data = this.getChainMappingValue(prefix, suffix);
+				data && data.forEach(function(d, i) {
+					// 取得父级作用域，再加上自己的作用域
+					var scopeChain = cloneScopeChain(me.scopeChain);//jQuery.extend(true, [], me.scopeChain);
+					scopeChain.unshift({
+						scope		: me.itemVar,
+						data		: d,
+						countVar	: me.countVar,
+						indexVar	: me.indexVar
+					});
+					var node = new Node({
+						template	: me.template,
+						scopeChain	: scopeChain,
+					});
+					
+					nodes.push(node);
+				});
+				return nodes;
+			},
+			getChainMappingValue: function(prefix, suffix) {
+				var arr = this.scopeChain.filter(function(s, i) {
+					return s.scope == prefix;
+				});
+				if(arr.length) {
+					return arr[0].data[suffix];
+				}
+			},
+			
+			getId: function() {
+				return this.blockId = this.blockId || Math.random().toString(36).slice(2, 10);
+			}
+		};
+		
+		function Node(opts) {
+			for(var k in opts) {
+				this[k] = opts[k];
+			}
+			this.children = this.getBlocks();
+			this.placeholderTemplate = this.getPlaceholderTemplate();	// 替换占位符后的template
+		}
+		
+		Node.prototype = {
+			
+			getHtml: function() {
+				var me = this;
+				var html = this.placeholderTemplate.replace(/{([^}]+)}/g, function(x, expression) {
+					return me.getExpressionValue(expression);
+				});
+				
+				if(this.children.length) {		// 如果有子block, 替换为子block.getHtml();
+					html = html.replace(/\[#(\w+)\]/g, function(x, a) {
+						var block = me.getBlockById(a);
+						return block.getHtml();
+					});
+				}
+				
+				return html;
+			},
+			
+			// 根据表达式获取对应的值
+			getExpressionValue: function(expression) {
+			
+				var sc 			= this.scopeChain;
+				var data 		= sc[0];
+				var scopeObject = {};
+				sc.forEach(function(s) {
+					if(s.scope) {
+						scopeObject[s.scope] = s.data;
+						scopeObject.countVar = s['countVar'];
+						scopeObject.indexVar = s['indexVar'];
+					}
+				});
+				var rootScopeData = sc[sc.length - 1].data;
+				for(var k in rootScopeData) {
+					scopeObject[k] = rootScopeData[k];
+				}
+				var currentScope = sc[0];
+				
+				eval('with(scopeObject){ var returnVar = (' + expression + ') }');
+				return returnVar;
+			},
+			
+			getBlocks: function() {	// 获取一级子block(不包含二级以下block)
+				var me = this;
+				var tpl = this.template;
+				var eachReg 		= /<\/?each[^>]*>/g;		// <each ..>或</each>
+				var eachBeginReg 	= /<each\s+([\w.]+)=["']?(\w+)["']?\s*(?:\s+([\w.]+)=["']?(\w+)["']?)*\s*?>/;	// <each ..>
+				
+				var eMatch, stack = [], arr = [];
+				
+				while(eMatch = eachReg.exec(tpl)) {
+					var result = eachBeginReg.exec(eMatch[0]);
+					if(result) {
+						// <each ..>
+						var arrVar 		= result[1];
+						var itemVar 	= result[2];
+						var countVar	= result[3];
+						var indexVar 	= result[4];
+						
+						//console.log(countVar, indexVar);
+						
+						var ebOption = {
+							begin		: eMatch.index + eMatch[0].length,	// 开始位置(从block内容开始)
+							beginOuter	: eMatch.index,						// 开始位置(从block开始)
+							arrVar		: arrVar,
+							itemVar		: itemVar,
+							countVar	: countVar,
+							indexVar	: indexVar
+						};
+						stack.push(ebOption);
+					} else {
+						// </each>
+						var ebOption = stack.pop();
+						ebOption.end = eMatch.index;							// 结束位置
+						ebOption.endOuter = eMatch.index + eMatch[0].length;	// 结束位置
+
+						ebOption.template = function() {
+							return tpl.substring(this.begin, this.end);
+						}.call(ebOption);
+						
+						if(stack.length == 0) {
+							ebOption.scopeChain = cloneScopeChain(me.scopeChain);//jQuery.extend(true, [], me.scopeChain);
+							var eachBlock = new EachBlock(ebOption);
+							
+							// 顺序要反序，因为替换成占位符时要用到开始和结束位置，如果先替换前面的，后面的位置发生变化就不准确了
+							arr.unshift(eachBlock);
+						}
+					}
+				};
+				return arr;
+			},
+			
+			getBlockById: function(id) {
+				return this.children.filter(function(it) {
+					return it.blockId == id;
+				})[0];
+			},
+			
+			getPlaceholderTemplate: function() {
+				var tpl = this.template;
+				this.children.forEach(function(block, i) {
+					var beforeHTML 	= tpl.substring(0, block.beginOuter);			// 获取前面的html
+					var afterHTML 	= tpl.substring(block.endOuter, tpl.length);	// 获取后面的html
+					tpl = [
+						beforeHTML, 
+							'[#', block.getId(), ']',
+						afterHTML
+					].join('');
+				});
+				
+				return tpl;
+			}
+		};
+		
+		// 只clone非数组属性
+		function cloneScopeChain(data) {
+		
+			var arr = data.reduce(function(arr, it) {
+				var o = {};
+				for(var k in it) {
+					if(it[k]) {
+						it[k].constructor != Array && (o[k] = it[k]);
+					} else {
+						o[k] = it[k]
+					}
+				}
+				
+				arr.push(o);
+				return arr;
+			}, []);
+			
+			return arr;
+		}
+		
+		
+		
+	</script>
+</body>
+</html>

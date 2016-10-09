@@ -2,6 +2,20 @@ var express = require('express');
 var Mock 	= require('mockjs');
 var app 	= express();
 
+var router 	= require('./router');
+
+doRouter(router.router);
+
+function doRouter(r) {
+	for (var k in r) {
+		var data = Mock.mock(r[k]);
+		(function (d) {
+			app.get(k, function (req, res) {
+				res.send(d);
+			});
+		})(data);
+	}
+}
 
 app.use(express.static('./'));
 
