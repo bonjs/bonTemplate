@@ -20,11 +20,31 @@ var router = {
 		'departList|2' : [{
 				departName : /[A-Z][a-z]{1,6}/,
 				leaderName: /([A-Z][a-z]{1,6} ){2}/,
-				'group|5': [
+				'group|2': [
 					{
 						groupName: /[A-Z][a-z]{1,6}/,
-						'userList|20': [
-							{name: /([A-Z][a-z]{1,6} ){2}/, sex:/[mf]/}
+						'userList|2': [
+							{name: /([A-Z][a-z]{1,6} ){2}/, sex:/[mf]/,
+								'list|2': [
+									{name: /\w{5}/,
+										'list|2': [
+											{name: /\w{5}/,  
+												'list|2': [
+													{name: /\w{5}/,
+														'list|2': [
+															{name: /\w{5}/,
+																'list|2': [
+																	{name: /\w{5}/}
+																]
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								]
+							}
 						]
 					}
 				]
