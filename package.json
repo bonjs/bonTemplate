@@ -1,6 +1,6 @@
 {
   "name": "bon-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "高效，轻量，优雅的模板引擎",
   "main": "index.js",
   "scripts": {
