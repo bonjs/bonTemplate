@@ -2,6 +2,7 @@
 /**
 	author	: Alex
 	email	: ske@163.com
+	site	: http://bonjs.github.io
 	高效率
 	支持循环<each>
 	支持<if>
@@ -36,7 +37,7 @@ var bon = function() {
 		},
 		complier: function(rawHtml, data) {
 			
-			var html = rawHtml.replace(/\s*\n\s*/g, '');
+			var html = rawHtml.replace(/\s*\n\s*/g, '').replace(/'/g, '\\\'');
 			
 			//html.split(customTagsReg) 在ie8下会把匹配出来的空字符串给吞掉，故采用此方法兼容
 			var htmlTags 	= isIE8 ? html.replace(customTagsReg, symbol).split(symbol) : html.split(customTagsReg);	// html标签 

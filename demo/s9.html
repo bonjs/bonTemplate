@@ -41,11 +41,11 @@
 		<div>位置:{position.longitude + " " + position.latitude}</div>
 		<div>其他:{other.otherNames:formateOtherName}</div>
 		<div>人口:{population}万</div>
-		<if population >= "1000">
+		<if population >= 1000>
 			人口大城市	
 		</if>
 		<each area=u count=i>
-			<div class=title2>{u.name} - {i}</div>
+			<div class='title2'>{u.name} - {i}</div>
 		</each>
 	</script>
 	
@@ -59,7 +59,7 @@
 			olympicsTime:'20080808',
 			area: [
 				{name: '海淀区'}, 
-				{name: '朝阳区'}
+				{name: '朝阳区'}	
 			],
 			population: '2152.00',
 			position: {
@@ -69,7 +69,7 @@
 			other: {
 				otherNames: ['北平','帝都'],
 			}
-		};
+		}
 		
 		bon.addFun({
 			formateTime: function(v) {
@@ -83,6 +83,9 @@
 		
 		var h = bon.render(html, data);
 		a.innerHTML = h;
+		
+		
+		
 		
 	</script>
 </body>
