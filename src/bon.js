@@ -11,9 +11,15 @@
 */
 var bon = function() {
 	
-	var customTagsReg     	= /(?:<if\s+(?:['"]?[\w.\[\]!]+['"]?\s+(?:[><=!]=|[|&]{2})\s+['"]?[\w.\[\]!]+['"]?)\s*>|<\/if>)|<\/?each[^>]*>/g;
+	// 自定义标签(<if></if>, <each></each>)
+	//var customTagsReg     	= /(?:<if\s+(?:['"]?[\w.\[\]!]+['"]?\s+(?:[><=!]=|[|&]{2})\s+['"]?[\w.\[\]!]+['"]?)\s*>|<\/if>)|<\/?each[^>]*>/g;
+	var customTagsReg     	= /(?:<if\s+.*?>(?=[^<>]*<\/?\w)|<\/if>)|<\/?each[^>]*>/g;
 	
-	var ifAttributeReg		= /<if\s+(['"]?[\w.\[\]!]+['"]?\s+(?:[><=!]=|[|&]{2})\s+['"]?[\w.\[\]!]+['"]?)\s*>/g;
+	// 获取if标签属性
+	//var ifAttributeReg		= /<if\s+(['"]?[\w.\[\]!]+['"]?\s+(?:[><=!]=|[|&]{2})\s+['"]?[\w.\[\]!]+['"]?)\s*>/g;
+	var ifAttributeReg		= /<if\s+(.*)>/g;
+	
+	// 获取each标签属性
 	var eachAttributeReg	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
 	
 	var cache = {};
@@ -36,7 +42,7 @@ var bon = function() {
 		},
 		complier: function(rawHtml, data) {
 			
-			var html = rawHtml.replace(/\s*\n\s*/g, '').replace(/'/g, '\\\'');
+			var html = rawHtml.replace(/\s*\n\s*/g, '');//.replace(/'/g, '\\\'');
 			
 			//html.split(customTagsReg) 在ie8下会把匹配出来的空字符串给吞掉，故采用此方法兼容
 			var htmlTags 	= isIE8 ? html.replace(customTagsReg, symbol).split(symbol) : html.split(customTagsReg);	// html标签 
@@ -49,15 +55,12 @@ var bon = function() {
 				if(htmlTags && htmlTags[i]) {
 					var hTag = htmlTags[i];
 					
-					// 原{(.*?)(?:\:(\w+))?}
-					// ([^\\]|^){(.*?)(?:\:(\w+)[^\\])?}
 					// 如果大括号的左右标记前带有反斜线, 则忽略此标记
-					// js不支持逆向环视,只好用这种方式
+					// js不支持逆向环视,故改用这种方式
 					hTag = hTag.replace(/([^\\]|^){(.*?[^\\])(?:\:(\w+[^\\]))?}/g, function(x, other, expression, fn) {	// 取冒号前面的表达式（如果有冒号）
 
 						expression = addThisPrefix(expression, data);
-
-						return [other, "' + ", (fieldFn[fn] || ""), "(" , expression , ") + '"].join('');
+						return [other, "' + ", (fieldFn[fn] || ""), "(", expression, ") + '"].join('');
 					});
 					statement += "compilerTpl += ('" + hTag + "'); \n";
 				}
