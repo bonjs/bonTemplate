@@ -13,11 +13,9 @@
 var bon = function() {
 	
 	// 自定义标签(<if></if>, <each></each>)
-	//var customTagsReg     	= /(?:<if\s+(?:['"]?[\w.\[\]!]+['"]?\s+(?:[><=!]=|[|&]{2})\s+['"]?[\w.\[\]!]+['"]?)\s*>|<\/if>)|<\/?each[^>]*>/g;
 	var customTagsReg     	= /(?:<if\s+.*?>(?=[^<>]*<\/?\w)|<\/if>)|<\/?each[^>]*>/g;
 	
 	// 获取if标签属性
-	//var ifAttributeReg		= /<if\s+(['"]?[\w.\[\]!]+['"]?\s+(?:[><=!]=|[|&]{2})\s+['"]?[\w.\[\]!]+['"]?)\s*>/g;
 	var ifAttributeReg		= /<if\s+(.*)>/g;
 	
 	// 获取each标签属性
