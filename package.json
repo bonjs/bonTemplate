@@ -1,13 +1,22 @@
 {
   "name": "bonTemplate",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "高效，轻量，优雅的模板引擎",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Alex",
   "license": "ISC",
+  "keywords": [
+    "bonTemplate",
+    "bon-Template",
+	"高效",
+	"轻量",
+	"优雅",
+	"模板",
+	"引擎"
+  ],
   "devDependencies": {
     "express": "^4.14.0",
     "gulp": "^3.9.1",
