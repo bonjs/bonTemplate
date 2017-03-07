@@ -45,13 +45,13 @@ var bon = function() {
 			
 			//html.split(customTagsReg) 在ie8下会把匹配出来的空字符串给吞掉，故采用此方法兼容
 			var htmlTags 	= isIE8 ? html.replace(customTagsReg, symbol).split(symbol) : html.split(customTagsReg);	// html标签 
-			var customTags 	= html.match(customTagsReg);	// 自定义标签（<each><if>）
+			var customTags 	= html.match(customTagsReg) || [];	// 自定义标签（<each><if>）
 			
-			var len = Math.max(htmlTags ? htmlTags.length : 0, customTags ? customTags.length : 0);
+			var len = Math.max(htmlTags.length, customTags.length);
 		
 			var statement = '';
 			for(var i = 0; i < len; i ++) {
-				if(htmlTags && htmlTags[i]) {
+				if(htmlTags[i]) {
 					var hTag = htmlTags[i];
 					
 					// 如果大括号的左右标记前带有反斜线, 则忽略此标记
@@ -59,11 +59,11 @@ var bon = function() {
 					hTag = hTag.replace(/([^\\]|^){(.*?[^\\])(?:\:(\w+[^\\]))?}/g, function(x, other, expression, fn) {	// 取冒号前面的表达式（如果有冒号）
 
 						expression = addThisPrefix(expression, data);
-						return [other, "' + ", (fieldFn[fn] || ""), "(", expression, ") + '"].join('');
+						return other + "' + " + (fieldFn[fn] || "") + "(" + expression + ") + '";
 					});
 					statement += "compilerTpl += ('" + hTag + "'); \n";
 				}
-				if(customTags && customTags[i]) {
+				if(customTags[i]) {
 					var cTag = customTags[i];
 					cTag = cTag.replace(eachAttributeReg, function(x, arr, item, count, index) {
 					
@@ -73,16 +73,18 @@ var bon = function() {
 						var arrVar 		= id + '_arr';
 						var itemVar		= id + '_' + item + '_it';
 						var indexVar	= index || (id + '_i');
-						return 	'var ' + arrVar + ' = ' + arr + '; \n' + 
-								(count === undefined ? '' : '	var ' + count + ' = ' + arrVar + '.length;\n') + 
-								'for(var ' + indexVar + ' = 0; ' + indexVar + ' < ' + arrVar + '.length; ' + indexVar + ' ++) {\n' +
-								'	var ' + item + ' = ' + arrVar + '[' + indexVar + '];\n';
+						return 	[
+							'var ' + arrVar + ' = ' + arr + ';',
+							count === undefined ? '' : '	var ' + count + ' = ' + arrVar + '.length;',
+							'for(var ' + indexVar + ' = 0; ' + indexVar + ' < ' + arrVar + '.length; ' + indexVar + ' ++) {',
+							'	var ' + item + ' = ' + arrVar + '[' + indexVar + '];'
+						].join('\n');
 					});
 					
 					cTag = cTag.replace(ifAttributeReg, function(x, ifExpression) {
 						ifExpression = addThisPrefix(ifExpression, data);
 						return 'if(' + ifExpression + ') {\n';
-					}).replace(/<\/if>/g, '}\n').replace(/<\/each>/g, '}\n');
+					}).replace(/<\/(?:if|each)>/g, '}\n');
 					
 					statement += cTag;
 				}
