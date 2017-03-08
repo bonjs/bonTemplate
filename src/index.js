@@ -58,13 +58,7 @@ var bon = function() {
 					hTag = hTag.replace(/([^\\]|^){(.*?[^\\])(?:\:(\w+[^\\]))?}/g, function(x, other, expression, fn) {	// 取冒号前面的表达式（如果有冒号）
 
 						expression = addThisPrefix(expression, data);
-						var fnStatement;
-						if(fieldFn[fn]) {
-							fnStatement = other + "' + (" + fieldFn[fn] + ").call(this, (" + expression + ")) + '";
-						} else {
-							fnStatement = other + "' + (" + expression + ") + '";
-						}
-						return fnStatement;
+						return [other, "' + ", (fieldFn[fn] ? '(' + fieldFn[fn] + '.bind(this))' : ""), "(", expression, ") + '"].join('');
 					});
 					statement += "compilerTpl += ('" + hTag + "'); \n";
 				}
