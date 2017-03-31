@@ -8,7 +8,7 @@
 * 支持自定义格式化函数
 * 使用简单，易懂
 
-####安装和启动
+#### 安装和启动
 ```Bash
 git clone https://github.com/bonjs/bonTemplate.git
 npm install
@@ -17,7 +17,7 @@ node app
 
 访问http://127.0.0.1:3000
 
-####模板
+#### 模板
 ```html
 <script id=tpl type="html">
 	<div>{name}</div>
@@ -25,7 +25,7 @@ node app
 	<div>{email}</div>
 </script>
 ```
-####数据
+#### 数据
 ```javascript
 var data = {
 	name	: 'bonTemplate',
@@ -33,7 +33,7 @@ var data = {
 	email	: 'ske@163.com'
 }
 ```
-####调用方式
+#### 调用方式
 ```javascript
 var html = document.getElementById('tpl').innerHTML
 var str = bon.render(html, data);
@@ -41,7 +41,7 @@ a.innerHTML = str;
 ```
 
 
-##可嵌套的循环标签
+## 可嵌套的循环标签
 ```html
 <each userList=u>
 	<div>{u.name}</div>
@@ -74,7 +74,7 @@ a.innerHTML = str;
 }
 ```
 
-##条件标签
+## 条件标签
 ```html
 <div>
 	<div>{name}</div>
@@ -93,7 +93,7 @@ a.innerHTML = str;
 }
 ```
 
-##表达式
+## 表达式
 ```html
 <div>
 	<div>{name}</div>
@@ -109,7 +109,7 @@ a.innerHTML = str;
 }
 ```
 
-##自定义格式化函数
+## 自定义格式化函数
 ```javascript
 bon.addFun({
 	myFun : function(v) {
@@ -133,7 +133,7 @@ bon.addFun({
 }
 ```
 
-##全家桶
+## 全家桶
 ```javascript
 bon.addFun({
 	formateEmail: function(email) {
