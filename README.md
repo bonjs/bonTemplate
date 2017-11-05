@@ -18,11 +18,11 @@ node app
 访问http://127.0.0.1:3000
 
 ####模板
-```
+```html
 <script id=tpl type="html">
-	<div>{this.name}</div>
-	<div>{this.sex}</div>
-	<div>{this.email}</div>
+	<div>{name}</div>
+	<div>{sex}</div>
+	<div>{email}</div>
 </script>
 ```
 ####数据
@@ -35,15 +35,15 @@ var data = {
 ```
 ####调用方式
 ```javascript
-bon.complier(document.getElementById('tpl').innerHTML);
-var html = bon.render(data);
-a.innerHTML = html;
+var html = document.getElementById('tpl').innerHTML
+var str = bon.render(html, data);
+a.innerHTML = str;
 ```
 
 
 ##可嵌套的循环标签
-```
-<each this.userList=u>
+```html
+<each userList=u>
 	<div>{u.name}</div>
 	<div>{u.sex}</div>
 	<div>{u.email}</div>
@@ -75,12 +75,12 @@ a.innerHTML = html;
 ```
 
 ##条件标签
-```
+```html
 <div>
-	<div>{this.name}</div>
-	<div>{this.sex}</div>
-	<div>{this.email}</div>
-	<if this.sex == 'm'>
+	<div>{name}</div>
+	<div>{sex}</div>
+	<div>{email}</div>
+	<if sex == 'm'>
 		爱好数码
 	</if>
 </div>
@@ -94,11 +94,11 @@ a.innerHTML = html;
 ```
 
 ##表达式
-```
+```html
 <div>
-	<div>{this.name}</div>
-	<div>{this.sex == 'm' ? '男' : '女'}</div>
-	<div>{this.email}</div>
+	<div>{name}</div>
+	<div>{sex == 'm' ? '男' : '女'}</div>
+	<div>{email}</div>
 </div>
 ```
 ```javascript
@@ -111,16 +111,18 @@ a.innerHTML = html;
 
 ##自定义格式化函数
 ```javascript
-function myFun(v) {
-	return v == 'm' ? '男' : '女';	
-}
+bon.addFun({
+	myFun : function(v) {
+		return v == 'm' ? '男' : '女';	
+	}
+});
 ```
 
-```
+```html
 <div>
-	<div>{this.name}</div>
-	<div>{this.sex:myFun}</div>
-	<div>{this.email}</div>
+	<div>{name}</div>
+	<div>{sex:myFun}</div>
+	<div>{email}</div>
 </div>
 ```
 ```javascript
@@ -133,14 +135,15 @@ function myFun(v) {
 
 ##全家桶
 ```javascript
-function formateEmail(email) {
-	return 'Email: ' + email;
-}
-
+bon.addFun({
+	formateEmail: function(email) {
+		return 'Email: ' + email;
+	}	
+})
 ```
 
-```
-<each this.userList=u>
+```html
+<each userList=u>
 	<div>{u.name}</div>
 	<div>{u.sex == 'm' ? '男' : '女'}</div>
 	<div>{u.email:formateEmail}</div>
