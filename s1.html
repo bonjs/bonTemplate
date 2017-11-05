@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hexo</title>
+  <style>
+  	body *{
+  		padding: 0px;
+  		margin: 0px;
+  		font-size: 14px;
+  	}
+  	body * {
+  		border-bottom: 1px red solid;
+  	}
+  	.title {
+  		font-weight: bold;
+  		background: #acc;
+  		padding-left: 10px
+  	}
+  	.title2 {
+  		background: #ddd;
+  		list-style: none;
+  		padding-left: 60px
+  	}
+  	li{
+  		padding: 3px 0 3px 110px;
+  	}
+	.hidden {
+		display:none;
+	}
+  </style>
+  <script src="//cdn.bootcss.com/jquery/1.12.1/jquery.js"></script>
+</head>
+<body>
+	<div id=a></div>
+	<script>
+	
+		var html = [
+			'<ul>',
+				'<each list=u>',
+					'<li>用户: {u.user}/ 网站：{u.site}</li>',
+				'</each>',
+			'</ul>',
+		].join('');
+		
+		$.get('data', function(data) {
+			var start = new Date().getTime();
+			
+			for(var i = 0; i < 10000; i ++) {
+				var h = bonTemplate(html, data);
+			}
+			var time = (new Date().getTime() - start);
+			alert(time);
+		});
+		
+		
+		function bonTemplate(html, data) {
+		
+			var htmlTags = html.split(/<\/?each\s?[^>]*>/);
+			var eachTags = html.match(/<\/?each\s?[^>]*>/g);
+			
+			var tpl = [], complierTpl = [];
+			var biggerLength = Math.max(htmlTags.length, eachTags.length);
+			for(var i = 0; i < biggerLength; i ++) {
+			
+				var hTag = (htmlTags[i]).replace(/"/g, '\\\"').replace(/{([^}]+)}/g, function(x, key) {
+					return '" + (' + key + ') + "';
+				});
+				var eTag = eachTags[i];
+				
+				var h = e = '';
+				if(hTag) {
+					h = 'complierTpl.push( "' + hTag + '"); \n';
+					tpl.push(h);
+				}
+				if(eTag) {
+					var matchs = /<each\s+([\w.]+)\=['"]?(\w+)['"]?\s*>/.exec(eTag);
+					e = matchs ? matchs[1] + '.forEach(function(' + matchs[2] + ', i) { \n' : '}); \n';
+					matchs = null;
+					tpl.push(e);
+				}
+			}
+			
+			eval('with(data) { ' + tpl.join('') + '}');
+			
+			var result = complierTpl.join('');
+			tpl = html = complierTpl = eachTags = htmlTags = null;
+			return result
+		}
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hexo</title>
+  <style>
+  	body *{
+  		padding: 0px;
+  		margin: 0px;
+  		font-size: 14px;
+  	}
+  	body * {
+  		border-bottom: 1px red solid;
+  	}
+  	.title {
+  		font-weight: bold;
+  		background: #acc;
+  		padding-left: 10px
+  	}
+  	.title2 {
+  		background: #ddd;
+  		list-style: none;
+  		padding-left: 60px
+  	}
+  	li{
+  		padding: 3px 0 3px 110px;
+  	}
+	.hidden {
+		display:none;
+	}
+  </style>
+  <script src="//cdn.bootcss.com/jquery/1.12.1/jquery.js"></script>
+</head>
+<body>
+	<div id=a></div>
+	<script>
+		
+		var html = [
+			'<ul>',
+				'<each list=u>',
+					'<li>{name} 用户: {u.user} / 网站：{u.site}</li>',
+				'</each>',
+			'</ul>',
+		].join('');
+		
+		$.get('data2', function(data) {
+			var start = new Date().getTime();
+			bon.complier(html);
+			for(var i = 0; i < 10000; i ++) {
+				bon.render(data);
+			}
+			//a.innerHTML = h;
+			var time = new Date().getTime() - start;
+			alert(time);
+		});
+		
+		var bon = function() {
+		
+			return {
+				render: function(data, html) {
+					html && this.complier(html);
+				
+					var tpl = this.template;
+				
+					//eval('var compilerTpl = []; with(data) { ' + tpl + '}');
+					
+					var compilerTpl = []; 
+					eval(tpl);
+					
+					var result = compilerTpl.join('');
+					compilerTpl = null;
+					return result;
+				},
+				complier: function(html) {
+					var r = /<\/?each\s?[^>]*>|<\/?if\s?[^>]*>/g;
+					var htmlTags 	= html.split(r);	// html标签
+					var customTags 	= html.match(r);	// 自定义标签（<each><if>）
+					
+					var len = Math.max(htmlTags.length, customTags.length);
+				
+					var compilerTpl = [], tpl = [];
+					for(var i = 0; i < len; i ++) {
+						if(htmlTags[i]) {
+							var hTag = htmlTags[i];
+							var hTag = hTag.replace(/{([^}]+)}/g, function(x, k) {
+								if(/\./.test(k)) {
+									return ["' + (" , k , ") + '"].join('');
+								}
+								return ["' + (typeof " , k , " == \"undefined\" ? data." , k , " : " , k , ") + '"].join('');
+							});
+							tpl.push("compilerTpl.push('" + hTag + "'); \n");
+						}
+						if(customTags[i]) {
+							var cTag = customTags[i];
+							var reg = /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
+							cTag = cTag.replace(reg, function(x, arrVar, itemVar, countVar, indexVar) {
+								return 'data.' + arrVar + '.forEach(function(' + itemVar + ', ' + indexVar + ') { \n';
+							}).replace(/<if\s+([\w.]+)={1,2}['"]?(\w+)['"]?\s*>/g, function(x, v1, v2) {
+								return 'if(' + v1 + ' == "' + v2 + '") { \n';
+							}).replace(/<\/if>/g, ' } \n ').replace(/<\/each>/g, ' }); \n');
+							
+							tpl.push(cTag);
+						}
+					}
+					this.template = tpl.join('');
+					console.log(this.template);
+					compilerTpl = tpl = customTags = htmlTags = null;
+				}
+			}
+		}();
+		
+		
+	</script>
+</body>
+</html>

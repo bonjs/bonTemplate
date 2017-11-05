@@ -15,16 +15,63 @@ var router = {
 		'id': /\w{32}/,
         'name': /[a-z]{3,6}/
 	},
+	'/data': {
+		'list|100': [
+			{
+				'index|+1': 1,
+				user: '<strong style="color:red">ÌÇ±ý</strong>',
+				site: 'http://www.planeart.cn',
+				weibo: 'http://weibo.com/planeart',
+				QQweibo: 'http://t.qq.com/tangbin'
+			}
+		]
+	},
+	'/data2': {
+		name:'¹þ¹þ',
+		'list|100': [
+			{
+				'index|+1': 1,
+				user: '<strong style="color:red">ÌÇ±ý</strong>',
+				site: 'http://www.planeart.cn',
+				weibo: 'http://weibo.com/planeart',
+				QQweibo: 'http://t.qq.com/tangbin'
+			}
+		]
+	},
 	'/getData': {
 		title : 'ckk',
-		'departList|5' : [{
-				departName : /\w{5}\d{1,2}/,
-				leaderName: /\w{5}/,
+		'departList|2' : [{
+				departName : /[A-Z][a-z]{1,6}/,
+				leaderName: /([A-Z][a-z]{1,6} ){2}/,
 				'group|2': [
 					{
-						groupName: /\w{5}/,
-						'userList|3': [
-							{name: /\w{5,7}/, sex:/[mf]/}
+						groupName: /[A-Z][a-z]{1,6}/,
+						'userList|2': [
+							{name: /([A-Z][a-z]{1,6} ){2}/, sex:/[mf]/,
+								'list|2': [
+									{name: /\w{5}/,
+										'list|2': [
+											{name: /\w{5}/,  
+												'list|2': [
+													{name: /\w{5}/,
+														'list|2': [
+															{name: /\w{5}/,
+																'list|2': [
+																	{name: /\d{2}/,
+																		'list|2': [
+																			{name: /\d{5}/}
+																		]
+																	}
+																]
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								]
+							}
 						]
 					}
 				]
