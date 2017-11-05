@@ -47,9 +47,16 @@ var bon = function() {
 			for(var i = 0; i < len; i ++) {
 				if(htmlTags && htmlTags[i]) {
 					var hTag = htmlTags[i];
-					hTag = hTag.replace(/{(.*?)(?:\:(\w+))?}/g, function(x, expression, fn) {	// 取冒号前面的表达式（如果有冒号）
+					
+					// 原{(.*?)(?:\:(\w+))?}
+					// ([^\\]|^){(.*?)(?:\:(\w+)[^\\])?}
+					// 如果大括号的左右标记前带有反斜线, 则忽略此标记
+					// js不支持逆向环视,只好用这种方式
+					hTag = hTag.replace(/([^\\]|^){(.*?[^\\])(?:\:(\w+[^\\]))?}/g, function(x, other, expression, fn) {	// 取冒号前面的表达式（如果有冒号）
+
 						expression = addThisPrefix(expression, data);
-						return ["' + ", (fieldFn[fn] || ""), "(" , expression , ") + '"].join('');
+
+						return [other, "' + ", (fieldFn[fn] || ""), "(" , expression , ") + '"].join('');
 					});
 					statement += "compilerTpl += ('" + hTag + "'); \n";
 				}
@@ -89,5 +96,5 @@ var bon = function() {
 				fieldFn[fnName] = fns[fnName];
 			}
 		}
-	}
+	};
 }();
