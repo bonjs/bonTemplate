@@ -10,8 +10,8 @@
 */
 var bon = function() {
 	
-	var customTagsReg     	= /<\/?(?:each|if)\s?[^>]*>/g;
-	var ifAttributeReg    	= /<if\s+([^>]+)\s*>/g;
+	var customTagsReg     	= /<\/?(?:each|if)\s?(?:[^<>=\s]+\s*(?:[><=!]=?|[&|]{2})\s*[^<>=\s]+)*\s*>/g;	//	/<\/?(?:each|if)\s?[^>]*>/g;
+	var ifAttributeReg    	= /<if\s+((?:[^<>=\s]+\s*(?:[><=!]=?|[&|]{2})\s*[^<>=\s]+))*\s*>/g; // 	/<if\s+([^>]+)\s*>/g;
 	var eachAttributeReg   	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
 	
 	var cache = {};
