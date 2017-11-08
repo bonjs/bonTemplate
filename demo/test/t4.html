@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hexo</title>
+</head>
+<body>
+	<script>
+		window.onload = function() {
+			
+			var data = {
+				list: [
+					{
+						name: '11',
+						list: [
+							{name: 'sun1'},
+							{name: 'sun2'}
+						]
+					}, {
+						name: '12',
+						list: [
+							{name: 'tom1'},
+							{name: 'tom2'}
+						]
+					}
+				]
+			};
+			
+			window.html = [
+				'<div>',
+					'<each list="u11">',
+						'<div>{一级１}</div>',
+						'<each u1.list=u2>',
+							'<div>{二级１}</div>',
+						'</each>',
+					'</each>',
+				'</div>',
+				'<each list="u12">',
+					'<div>{一级２}</div>',
+				'</each>',
+			].join('');
+			
+			/**
+				１，　获取一级block, 将block替换成唯一的占位符
+				２，　获取子级block, 
+			
+			*/
+			
+			Block.prototype.html = html;
+			//console.log(html);
+			var a = t(html);
+			a.forEach(function(it, i) {
+				console.log('-', it.getBlocks());
+			});
+			
+		};
+		
+		
+		
+		function t(html) {
+		
+			var reg = /<\/?each[^>]*>/g;
+			var r, stack = [], a = [];
+			while(r = reg.exec(html)) {
+				
+				var result = /<each\s+([\w.]+)=["']?(\w+)["']?>/.exec(r[0]);
+				
+				if(result) {
+					var arrVar = result[1];
+					var itemVar = result[2];
+					
+					var eb = new Block({
+						begin: r.index + r[0].length,	// 开始位置
+						arrVar: arrVar,
+						itemVar: itemVar
+					});
+					stack.push(eb);
+					
+					if(stack.length == 1) {
+						//console.log('一级', eb.getOriginalHtml());
+						a.push(eb);
+					}
+				} else {
+					var eb = stack.pop();
+					eb.end = r.index;					// 结束位置
+					//delete eb.begin;
+					//delete eb.end;
+					//a.push(eb);
+				}
+			};
+		
+			return a;
+		}
+		
+		function Block(opt) {
+			for(var k in opt) {
+				this[k] = opt[k];
+			}
+		} 
+		Block.prototype = {
+			getOriginalHtml: function() {
+				return this.html.substring(this.begin, this.end);
+			},
+			getRenderHtml: function() {
+				return 'test';
+			},
+			getBlocks: function() {
+				return t(this.getOriginalHtml())
+			}
+		};
+		
+		
+	</script>
+</body>
+</html>
