@@ -15,6 +15,29 @@ var router = {
 		'id': /\w{32}/,
         'name': /[a-z]{3,6}/
 	},
+	'/data': {
+		'list|100': [
+			{
+				'index|+1': 1,
+				user: '<strong style="color:red">ÌÇ±ý</strong>',
+				site: 'http://www.planeart.cn',
+				weibo: 'http://weibo.com/planeart',
+				QQweibo: 'http://t.qq.com/tangbin'
+			}
+		]
+	},
+	'/data2': {
+		name:'¹þ¹þ',
+		'list|100': [
+			{
+				'index|+1': 1,
+				user: '<strong style="color:red">ÌÇ±ý</strong>',
+				site: 'http://www.planeart.cn',
+				weibo: 'http://weibo.com/planeart',
+				QQweibo: 'http://t.qq.com/tangbin'
+			}
+		]
+	},
 	'/getData': {
 		title : 'ckk',
 		'departList|2' : [{
@@ -34,9 +57,9 @@ var router = {
 														'list|2': [
 															{name: /\w{5}/,
 																'list|2': [
-																	{name: /\w{5}/,
+																	{name: /\d{2}/,
 																		'list|2': [
-																			{name: /\w{5}/}
+																			{name: /\d{5}/}
 																		]
 																	}
 																]
