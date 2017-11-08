@@ -27,49 +27,61 @@
 		display:none;
 	}
   </style>
+  
+	<script src="/src/bon.js"></script>
 </head>
 <body>
 	<h3>bonTemplate条件测试</h3>
 	<div id=a></div>
 	
-	<script src="/src/bon.js"></script>
+	<script type="html" id=tpl>
+		<div>城市名称:{this.name}</div>
+		<div>国家:{this.country}</div>
+		<div>奥运会时间:{this.olympicsTime:formateTime}</div>
+		<div>位置:{this.position.longitude + " " + this.position.latitude}</div>
+		<div>其他:{this.other.otherNames:formateOtherName}</div>
+		<div>人口:{this.population}万</div>
+		<if this.population >= 1000>
+			人口大城市	
+		</if>
+		<each this.area=u>
+			<div class=title2>{u.name}</div>
+		</each>
+	</script>
+	
 	<script>
 		
-		var html = [
-			'<div>1{this.name:test}</div>',
-			'<div>2{this.t.testName}</div>',
-			'<div>3{this.t.o.name:test}</div>',
-			'<each this.arr=u>',
-				'<div>4{u.name:test}</div>',
-			'</each>',
-			'<if this.name="sun">',
-				'孙长老',
-			'</if>'
-		].join('');
-		
-		function test(v) {
-			return '*' + v
-		}
-		
+		var html = document.getElementById('tpl').innerHTML;
+	
 		var data = {
-			name: 'sun',
-			arr: [
-				{
-					name: 'sun',
-				}, {
-					name: 'tom',
-				}	
+			name: '北京',
+			country: '中国',
+			olympicsTime:'20080808',
+			area: [
+				{name: '海淀区'}, 
+				{name: '朝阳区'}
 			],
-			t: {
-				testName: 'sun',
-				o: {
-					name:'魂牵梦萦'
-				}
+			population: '2152.00',
+			position: {
+				longitude : '116.46',
+				latitude:'39.92',
+			},
+			other: {
+				otherNames: ['北平','帝都'],
 			}
 		};
 		
 		var h = bon.render(data, html);
 		a.innerHTML = h;
+		
+		function formateTime(v) {
+			var matches = /(\d{4})(\d{2})(\d{2})/.exec(v);
+			return matches[1] + '年' + matches[2] + '月' + matches[3] + '日';
+		}
+		
+		function formateOtherName(a) {
+			return a.join(',');
+		}
 		
 		
 	</script>
