@@ -25,34 +25,73 @@
   	li{
   		padding: 3px 0 3px 110px;
   	}
+	.hidden {
+		display:none;
+	}
   </style>
   <script src="//cdn.bootcss.com/jquery/1.12.1/jquery.js"></script>
 </head>
 <body>
+	<button name=a>a</button>
+	<button name=b>b</button>
+	<div id=a>this is a</div>
+	<div id=b></div>
 	<script>
+	
+		/*
+		新思路
+		<div>{name}</div>
+		<each list=l>
+			<li>{l.name}</li>
+			<each l.list=a>
+				<li>{a.name}</li>
+			</each>
+		</each>
+
+		var str = '';
+		str += '<div>' + name + '</div>';
+		list.forEach(function(it, i) {
+			str += '<li>' + it.name + '</li>';
+			it.list.forEach(function(t, i) {
+				str += '<li>' + t.name + '</li>';
+			});
+		});
+		*/
+		
+	
+	
+		$('button[name=a]').click(function(){
+			$('#a').toggleClass('hidden');
+		});
+		$('button[name=b]').click(function(){
+			$('#b').toggleClass('hidden');
+		});
 			
 		$.get('getData', function(data) {
 			console.log('begin');
 			var html = [
 				'<div>{title}</div>',
 				'<div>',
-					'<each departList="d">',
-						'<div class="title">{d.departName}-{d.leaderName} 一级</div>',
-						'<each d.group=g>',
-							'<li class="title2">{g.groupName}组　二级</li>',
-							'<each g.userList=u>',
-								'<li>{u.name}({u.sex == "m" ?　"男" : "女"}) ({d.departName})　三级</li>',
-								'<each u.list=c>',
-									'<div style="padding-left: 160px"> --{c.name}　四级</div>',
-									'<each c.list=cc>',
-										'<div style="padding-left: 200px">{cc.name}　五级</div>',
-										'<each cc.list=ccc>',
-											'<div style="padding-left: 260px">{ccc.name}　六级</div>',
-											'<each ccc.list=cccc>',
-												'<div style="padding-left: 300px">{cccc.name}　七级</div>',
-													'<each cccc.list=ccccc>',
-														'<div style="padding-left: 300px">{ccccc.name}　八级</div>',
+					'<each departList="a">',
+						'<div class="title">{a.departName}-{a.leaderName} 一级</div>',
+						'<each a.group=b>',
+							'<li class="title2">{b.groupName}组　二级</li>',
+							'<each b.userList=c>',
+								'<li>{c.name}({c.sex == "m" ?　"男" : "女"}) ({c.departName})　三级</li>',
+								'<each c.list=d>',
+									'<div style="padding-left: 160px"> --{d.name}　四级</div>',
+									'<each d.list=e>',
+										'<div style="padding-left: 200px">{e.name}　五级</div>',
+										'<each e.list=f>',
+											'<div style="padding-left: 260px">{f.name}　六级</div>',
+											'<each f.list=g>',
+												'<div style="padding-left: 300px">{g.name}　七级</div>',
+												'<each g.list=h>',
+													'<div style="padding-left: 360px">{h.name}　八级</div>',
+													'<each h.list=i>',
+														'<div style="padding-left: 400px">{i.name}　九级</div>',
 													'</each>',
+												'</each>',
 											'</each>',
 										'</each>',
 									'</each>',
@@ -64,18 +103,18 @@
 			].join('');
 			
 			var html2 = [
-					'<each departList="d">',
-						'{d.departName}',
-					'</each>',
+				'<each departList="d">',
+					'<div>{d.departName}</div>',
+				'</each>',
 			].join('');
 			
 			var start = new Date().getTime();
-			var html = bonTemplate(html, data);
+			
+			var h = bonTemplate(html, data);
 			var time = new Date().getTime() - start;
-			alert(time);
+			
 			console.log('time:', time);
-			document.body.innerHTML = html;
-		
+			b.innerHTML = h;
 		});
 		
 		
@@ -123,7 +162,7 @@
 				data && data.forEach(function(d, i) {
 					// 取得父级作用域，再加上自己的作用域
 					var scopeChain = cloneScopeChain(me.scopeChain);//jQuery.extend(true, [], me.scopeChain);
-					scopeChain.unshift({
+					scopeChain.push({
 						scope		: me.itemVar,
 						data		: d,
 						countVar	: me.countVar,
@@ -158,17 +197,18 @@
 				this[k] = opts[k];
 			}
 			this.children = this.getBlocks();
-			this.placeholderTemplate = this.getPlaceholderTemplate();	// 替换占位符后的template
+			//this.template = this.getPlaceholderTemplate();	// 替换占位符后的template
+			this.getPlaceholderTemplate();
 		}
 		
 		Node.prototype = {
 			
 			getHtml: function() {
 				var me = this;
-				var html = this.placeholderTemplate.replace(/{([^}]+)}/g, function(x, expression) {
+				var html = this.template.replace(/{([^}]+)}/g, function(x, expression) {
 					return me.getExpressionValue(expression);
 				});
-				this.placeholderTemplate = null;
+				//this.placeholderTemplate = null;
 				
 				if(this.children.length) {		// 如果有子block, 替换为子block.getHtml();
 					html = html.replace(/\[#(\w+)\]/g, function(x, a) {
@@ -244,13 +284,14 @@
 							var eachBlock = new EachBlock(ebOption);
 							
 							// 顺序要反序，因为替换成占位符时要用到开始和结束位置，如果先替换前面的，后面的位置发生变化就不准确了
-							arr.unshift(eachBlock);
+							arr.push(eachBlock);
 						}
 						ebOption = null;
 					}
 					result = null;
 				};
 				eachBeginReg = eachReg = eMatch = stack = null;
+				
 				return arr;
 			},
 			
@@ -262,7 +303,7 @@
 			
 			getPlaceholderTemplate: function() {
 				var tpl = this.template;
-				this.children.forEach(function(block, i) {
+				this.children.length && this.children.forEach(function(block, i) {
 					var beforeHTML 	= tpl.substring(0, block.beginOuter);			// 获取前面的html
 					var afterHTML 	= tpl.substring(block.endOuter, tpl.length);	// 获取后面的html
 					tpl = [
@@ -271,14 +312,29 @@
 						afterHTML
 					].join('');
 				});
-				this.template = null;	
+				this.template = tpl;	
 				return tpl;
 			}
 		};
 		
 		// 只clone非数组属性
 		function cloneScopeChain(data) {
-		
+			
+			var arr = [];
+			for(var i = data.length - 1; i >= 0;  i --) {
+				var o = {};
+				var it = data[i];
+				for(var k in it) {
+					if(it[k]) {
+						it[k].constructor != Array && (o[k] = it[k]);
+					} else {
+						o[k] = it[k]
+					}
+				}
+				arr.push(o);
+			}
+			return arr;
+			/*
 			var chain = data.reduce(function(arr, it) {
 				var o = {};
 				for(var k in it) {
@@ -292,6 +348,7 @@
 				return arr;
 			}, []);
 			return chain;
+			*/
 		}
 		
 		
