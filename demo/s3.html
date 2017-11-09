@@ -46,11 +46,11 @@
 		
 		$.get('/data', function(data) {
 			var start = new Date().getTime();
-			bon.complier(html);
 			for(var i = 0; i < 10000; i ++) {
-				bon.render(data);
+				bon.render(data, html);
 			}
 			var time = new Date().getTime() - start;
+			//a.innerHTML = h;
 			a.innerHTML = ('100条数据执行10000次，花费时间：' + time + 'ms');
 		});
 		

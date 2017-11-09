@@ -72,8 +72,7 @@
 		
 		$.get('/getData', function(data) {
 			var start = new Date().getTime();
-			bon.complier(html);
-			var h = bon.render(data);
+			var h = bon.render(data, html);
 			
 			var time = new Date().getTime() - start;
 			a.innerHTML = h;

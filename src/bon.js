@@ -10,33 +10,31 @@
 	支持自定义格式化函数
 */
 var bon = function() {
-	
-	var customTagsReg     	= /<\/?(?:each|if)\s?[^>]*>/g; // /<\/?each\s?[^>]*>|<\/?if\s?[^>]*>/g;
-	var eachAttributeReg   	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
-	var ifAttributeReg    	= /<if\s+([^>]+)\s*>/g;
+	var customTagsReg		= /<\/?(?:each|if)\s?[^>]*>/g;
+	var eachAttributeReg 	= /<each\s+([\w.]+)\=['"]?(\w+)['"]?(?:\s+([\w.]+)\=['"]?(\w+)['"]?)*\s*>/g;
+	var ifAttributeReg 		= /<if\s+([^>]+)\s*>/g;
 	
 	var isES5 = !!Object.defineProperty;
+	var cache = {};
+	
 	return {
-		render: function(rootData, html) {
-			html && this.complier(html);
-		
-			var tpl = this.template;
-		
-			// 弃用效率低的with
-			//eval('var compilerTpl = []; with(data) { ' + tpl + '}');
-			var compilerTpl = isES5 ? '' : []; 
-			eval(tpl);
-			
-			var result = isES5 ? compilerTpl : compilerTpl.join('');
-			compilerTpl = null;
-			return result;
+		render: function(data, rawHtml) {
+			if(cache[rawHtml]) {
+				return cache[rawHtml].call(this, data);
+			}
+			this.complier(rawHtml);			
+			return cache[rawHtml].call(this, data);
 		},
-		complier: function(html) {
-			html = html.replace(/\s*\n\s*/g, '');
+		complier: function(rawHtml) {
+			
+			html = rawHtml.replace(/\s*\n\s*/g, '');
 			var htmlTags 	= html.split(customTagsReg);	// html标签
 			var customTags 	= html.match(customTagsReg);	// 自定义标签（<each><if>）
 			
 			var len = Math.max(htmlTags ? htmlTags.length : 0, customTags ? customTags.length : 0);
+		
+			var statementHeader = 'var compilerTpl = ' + (isES5 ? '""' : '[]') + ';\n';
+			var statementFooter = 'return ' + (isES5 ? 'compilerTpl; \n' : 'compilerTpl.join("");\n');
 		
 			var statement = isES5 ? '' : [];
 			for(var i = 0; i < len; i ++) {
@@ -67,14 +65,14 @@ var bon = function() {
 						});
 						
 						return 'if(' + ifExpression + ') {\n';
-						//return 'if(' + v1 + ' == "' + v2 + '") { \n';
 					}).replace(/<\/if>/g, '}\n').replace(/<\/each>/g, '});\n');
 					
 					isES5 ? statement += cTag : statement.push(cTag);
 				}
 			}
-			this.template = isES5 ? statement : statement.join('');
-			statement = customTags = htmlTags = null;
+			statement = isES5 ? statement : statement.join('');
+			cache[rawHtml] = new Function('rootData', statementHeader + statement + statementFooter);
+			statement = statementHeader = statementFooter = customTags = htmlTags = null;
 		}
 	}
 }();

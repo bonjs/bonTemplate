@@ -1,11 +1,12 @@
 # bonTemplate
-* 高效(100条数据执行10000次耗时80多ms，我本机上的测试结果，视电脑配置)
-* 轻量(压缩前也才3k)
+* 高效(100条数据执行10000次70多ms，我本机上的测试结果，视电脑配置)
+* 轻量(压缩前也才3K多)
 * 支持循环```<each>```
 * 支持条件判断```<if>```
 * 支持嵌套
 * 支持表达式
 * 支持自定义格式化函数
+* 使用简单，易懂
 
 ####安装和启动
 ```Bash
@@ -40,7 +41,7 @@ a.innerHTML = html;
 ```
 
 
-###可嵌套的循环标签
+##可嵌套的循环标签
 ```
 <each userList=u>
 	<div>{u.name}</div>
@@ -73,7 +74,7 @@ a.innerHTML = html;
 }
 ```
 
-###条件标签
+##条件标签
 ```
 <div>
 	<div>{u.name}</div>
@@ -92,7 +93,7 @@ a.innerHTML = html;
 }
 ```
 
-###表达式
+##表达式
 ```
 <div>
 	<div>{u.name}</div>
@@ -108,7 +109,7 @@ a.innerHTML = html;
 }
 ```
 
-###自定义格式化函数
+##自定义格式化函数
 ```javascript
 function myFun(v) {
 	return v == 'm' ? '男' : '女';	
@@ -130,7 +131,7 @@ function myFun(v) {
 }
 ```
 
-###全家桶
+##全家桶
 ```javascript
 function formateEmail(email) {
 	return 'Email: ' + email;
