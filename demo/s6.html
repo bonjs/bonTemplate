@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Template</title>
+  <style>
+  	body *{
+  		padding: 0px;
+  		margin: 0px;
+  		font-size: 14px;
+  	}
+ 
+  	.title {
+  		font-weight: bold;
+  		background: #acc;
+  		padding-left: 10px
+  	}
+  	.title2 {
+  		background: #ddd;
+  		list-style: none;
+  		padding-left: 60px
+  	}
+  	li{
+  		padding: 3px 0 3px 110px;
+  	}
+	.hidden {
+		display:none;
+	}
+	.red {
+		color: red;
+	}
+	.green {
+		color: green;
+	}
+  </style>
+  <script src="/src/bon.js"></script>
+</head>
+<body>
+	<div id=a></div>
+	<script id=tpl type="html">
+		<li class=title>boy</li>
+		<each list=u>
+			<if u.sex == "m">
+				<li class={u.sex == "m" ? "red" : "green"}>{u.name} </li>
+			</if>
+		</each>
+		<li class=title>girl</li>
+		<each list=u>
+			<if u.sex != "m">
+				<li class={u.sex == "m" ? "red" : "green"}>{u.name} </li>
+			</if>
+		</each>
+	</script>
+	
+	<script>
+		
+		var data = {
+			name: 'sun',
+			list: [{
+					name: 'user1', sex: 'm'
+				},{
+					name: 'user2', sex: 'f'
+				},{
+					name: 'user3', sex: 'm'
+				},{
+					name: 'user4', sex: 'm'
+				},{
+					name: 'user5', sex: 'f'
+				}
+			]
+		}
+		
+		bon.complier(document.getElementById('tpl').innerHTML);
+		var h = bon.render(data);
+		a.innerHTML = h;
+		
+		
+	</script>
+</body>
+</html>
