@@ -32,6 +32,7 @@
   <script src="//cdn.bootcss.com/jquery/1.12.1/jquery.js"></script>
 </head>
 <body>
+	<h3>bonTemplate循环嵌套</h3>
 	<div id=a></div>
 	
 	<script src="/src/bon.js"></script>
@@ -39,8 +40,8 @@
 		
 		var html = [
 			'<div>',
-				'<div>{title}</div>',
-				'<each departList=a>',
+				'<div>{this.title}</div>',
+				'<each this.departList=a>',
 					'<li class=title>{a.departName} 一级</li>',
 					'<each a.group=b>',
 						'<li class=title2>{b.groupName}　二级</li>',
