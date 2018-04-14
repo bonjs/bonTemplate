@@ -60,14 +60,14 @@ a.innerHTML = str;
 			sex		: 'm',
 			email	: 'ske@163.com',
 			hobbys: [
-				'吃',　'喝',　'玩',　'乐'
+				'吃', '喝', '玩', '乐'
 			]
 		}, {
-			name	: 'bonTemplate',
+			name	: 'bonjs',
 			sex		: 'm',
-			email	: 'ske@163.com'，
+			email	: 'ske@163.com',
 			hobbys: [
-				'吃',　'喝',　'玩',　'乐'
+				'吃饭', '睡觉', '打豆豆'
 			]
 		}
 	]
@@ -169,11 +169,11 @@ bon.addFun({
 				'吃',　'喝',　'玩',　'乐'
 			]
 		}, {
-			name	: 'she',
-			sex		: 'f',
-			email	: 'fdsafs@163.com'，
+			name	: 'bonjs',
+			sex		: 'm',
+			email	: 'ske@163.com',
 			hobbys: [
-				'吃',　'喝',　'玩',　'乐'
+				'吃饭', '睡觉', '打豆豆'
 			]
 		}
 	]
