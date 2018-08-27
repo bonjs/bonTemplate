@@ -11,11 +11,18 @@
 #### 安装和启动
 ```Bash
 git clone https://github.com/bonjs/bonTemplate.git
+cd bonTemplate
 npm install
 node app
 ```
 
 访问http://127.0.0.1:3000
+
+npm安装
+
+```
+npm install bon-template --save
+```
 
 #### 模板
 ```html

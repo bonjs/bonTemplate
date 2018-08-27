@@ -28,7 +28,7 @@ var router = {
 	},
 	
 	'/getData' : {
-		'title' : 'ckk',
+		'title' : 'root',
 		'departList|2' : [{
 				departName : /[A-Z][a-z]{1,6}/,
 				leaderName : /([A-Z][a-z]{1,6} ){2}/,

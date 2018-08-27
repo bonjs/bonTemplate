@@ -1,6 +1,6 @@
 {
   "name": "bon-template",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "高效，轻量，优雅的模板引擎",
   "main": "src/index.js",
   "scripts": {
@@ -11,11 +11,11 @@
   "keywords": [
     "bonTemplate",
     "bon-Template",
-	"高效",
-	"轻量",
-	"优雅",
-	"模板",
-	"引擎"
+    "高效",
+    "轻量",
+    "优雅",
+    "模板",
+    "引擎"
   ],
   "devDependencies": {
     "express": "^4.14.0",

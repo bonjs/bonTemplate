@@ -1,4 +1,5 @@
 var express = require('express');
+var fs 		= require('fs');
 var Mock 	= require('mockjs');
 var app 	= express();
 
@@ -17,10 +18,10 @@ function doRouter(r) {
 	}
 }
 
-app.use(express.static('./'));
+app.use(express.static('./example'));
 
-app.get('/test', function (req, res) {
-	res.sendfile('./t4.html');
+app.get('/src/index.js', function(req, res) {
+	res.sendFile(__dirname + '/src/index.js')
 });
 
 var server = app.listen(3000, function (a, b) {
