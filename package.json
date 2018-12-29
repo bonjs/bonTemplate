@@ -4,7 +4,7 @@
   "description": "高效，轻量，优雅的模板引擎",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "Alex",
   "license": "ISC",
@@ -22,5 +22,8 @@
     "gulp": "^3.9.1",
     "laravel-elixir": "^5.0.0",
     "mockjs": "^1.0.1-beta3"
+  },
+  "dependencies": {
+    "mocha": "^5.2.0"
   }
 }
