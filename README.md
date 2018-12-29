@@ -1,4 +1,4 @@
-# bonTemplate
+# bonTemplate [![Build Status](https://travis-ci.org/bonjs/bon-template.svg?branch=master)](https://travis-ci.org/bonjs/bon-template) [![](https://img.shields.io/npm/v/bon-template.svg)](https://www.npmjs.com/package/bon-template) [![](https://img.shields.io/npm/l/bon-template.svg)](https://img.shields.io/npm/l/bon-template.svg)
 * 高效(100条数据执行10000次一共耗时50多ms，我本机上的测试结果，视电脑配置)
 * 轻量(压缩前也才3K多)
 * 支持循环```<each>```
