@@ -20,7 +20,7 @@ node app
 
 npm安装
 
-```
+```bash
 npm install bon-template --save
 ```
 
